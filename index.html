@@ -245,17 +245,10 @@ body.hovered #cdot{
 .av-inner{width:100%;height:100%;border-radius:50%;background:#000;padding:3px}
 .av-imgwrap{width:100%;height:100%;border-radius:50%;overflow:hidden}
 .av-img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(100%) contrast(1.15)}
-.av-dot{position:absolute;bottom:3px;right:3px;width:13px;height:13px;border-radius:50%;background:#fff;border:2.5px solid #000;box-shadow:0 0 8px rgba(255,255,255,0.7);animation:blink 2.5s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 8px rgba(255,255,255,0.7)}50%{opacity:.5;box-shadow:0 0 3px rgba(255,255,255,0.3)}}
-
 .hero-info{flex:1;min-width:0}
 .hero-name{font-family:'Inter',sans-serif;font-size:1.68rem;font-weight:800;letter-spacing:-.035em;color:#fff;line-height:1;margin-bottom:6px;text-shadow:0 0 35px rgba(255,255,255,0.25)}
-.hero-handle{font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:500;color:#888;letter-spacing:.02em;margin-bottom:9px}
+.hero-handle{font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:500;color:#888;letter-spacing:.02em;margin-bottom:0}
 .hero-handle b{color:#fff;font-weight:600}
-.status-wrap{display:flex;align-items:flex-start;gap:6px}
-.sdot{width:7px;height:7px;border-radius:50%;background:#fff;flex-shrink:0;margin-top:3px;animation:blink 2.5s ease-in-out infinite}
-.stxt{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:600;letter-spacing:.08em;color:#aaa;text-transform:uppercase}
-.strack{display:none;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:#666;letter-spacing:.04em;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
 
 /* ═══ DIVIDER ═══ */
 .dv{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),rgba(255,255,255,0.06),transparent);margin:0 18px;position:relative;z-index:2}
@@ -421,194 +414,6 @@ input.vol::-webkit-slider-thumb{
 }
 .soc-btn:hover img{
   transform:scale(1.12);
-}
-
-/* ═══ +REP BUTTON ═══ */
-.rep-section{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:12px;
-  flex-wrap:wrap;
-  padding:0 20px 22px;
-  position:relative;z-index:2;
-}
-.rep-btn{
-  position:relative;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  min-width:130px;
-  padding:8px 20px;
-  border-radius:100px;
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.16);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 6px 20px rgba(0,0,0,0.4);
-  cursor:pointer;
-  user-select:none;
-  font-family:'JetBrains Mono',monospace;
-  transition:all .22s cubic-bezier(.16,1,.3,1);
-  overflow:visible;
-  outline:none;
-}
-.rep-btn:hover{
-  background:rgba(255,255,255,0.14);
-  border-color:rgba(255,255,255,0.4);
-  transform:translateY(-2px) scale(1.04);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.4),0 10px 30px rgba(0,0,0,0.6),0 0 25px rgba(255,255,255,0.12);
-}
-.rep-btn:active{
-  transform:translateY(1px) scale(0.96);
-}
-.rep-icon{
-  font-size:1.05rem;
-  color:#fff;
-  filter:drop-shadow(0 0 6px rgba(255,255,255,0.4));
-  transition:transform .2s ease;
-}
-.rep-btn:hover .rep-icon{
-  transform:scale(1.2) rotate(-8deg);
-}
-.rep-text{
-  font-size:.76rem;
-  font-weight:700;
-  letter-spacing:.06em;
-  color:#fff;
-  text-transform:uppercase;
-}
-.rep-badge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:3px 9px;
-  border-radius:100px;
-  background:rgba(255,255,255,0.12);
-  border:1px solid rgba(255,255,255,0.22);
-  font-size:.72rem;
-  font-weight:800;
-  color:#ffffff;
-  letter-spacing:.02em;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.2);
-  transition:transform .2s ease, background .2s ease;
-}
-.rep-btn:hover .rep-badge{
-  background:rgba(255,255,255,0.22);
-  transform:scale(1.05);
-}
-.rep-badge.bump{
-  animation:repBump 0.28s cubic-bezier(0.16,1,0.3,1);
-}
-@keyframes repBump{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.35);background:#fff;color:#000;box-shadow:0 0 16px #fff}
-  100%{transform:scale(1)}
-}
-.rep-floater{
-  position:fixed;
-  pointer-events:none;
-  z-index:9999999;
-  font-family:'JetBrains Mono',monospace;
-  font-size:1.15rem;
-  font-weight:800;
-  color:#ffffff;
-  text-shadow:0 0 10px rgba(255,255,255,0.9),0 0 25px rgba(255,255,255,0.5);
-  animation:floatRep 0.85s cubic-bezier(0.16,1,0.3,1) forwards;
-}
-@keyframes floatRep{
-  0%{ opacity:1; transform:translate(-50%, 0) scale(0.85); }
-  35%{ opacity:1; transform:translate(-50%, -22px) scale(1.3); }
-  100%{ opacity:0; transform:translate(-50%, -46px) scale(1); }
-}
-.rep-btn.repped{
-  background:rgba(255,255,255,0.12);
-  border-color:rgba(255,255,255,0.38);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.35),0 0 20px rgba(255,255,255,0.1);
-}
-.rep-btn.repped .rep-icon{
-  color:#fff;
-  filter:drop-shadow(0 0 8px rgba(255,255,255,0.8));
-}
-.rep-btn.shake{
-  animation:repShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-}
-@keyframes repShake{
-  10%, 90% { transform: translate3d(-3px, 0, 0); }
-  20%, 80% { transform: translate3d(4px, 0, 0); }
-  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-  40%, 60% { transform: translate3d(4px, 0, 0); }
-}
-
-/* ═══ PROFILE VIEWS BADGE ═══ */
-.views-btn{
-  position:relative;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:9px;
-  min-width:130px;
-  padding:8px 18px;
-  border-radius:100px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.14);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.2),0 6px 20px rgba(0,0,0,0.35);
-  cursor:pointer;
-  user-select:none;
-  font-family:'JetBrains Mono',monospace;
-  transition:all .22s cubic-bezier(.16,1,.3,1);
-  overflow:visible;
-  outline:none;
-}
-.views-btn:hover{
-  background:rgba(255,255,255,0.11);
-  border-color:rgba(255,255,255,0.32);
-  transform:translateY(-2px) scale(1.02);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.35),0 10px 25px rgba(0,0,0,0.5),0 0 20px rgba(255,255,255,0.08);
-}
-.views-btn:active{
-  transform:translateY(1px) scale(0.97);
-}
-.views-icon{
-  font-size:1.05rem;
-  color:#aaa;
-  transition:transform .2s ease, color .2s ease;
-}
-.views-btn:hover .views-icon{
-  color:#fff;
-  filter:drop-shadow(0 0 8px rgba(255,255,255,0.8));
-  transform:scale(1.18);
-}
-.views-text{
-  font-size:.74rem;
-  font-weight:700;
-  letter-spacing:.08em;
-  color:#999;
-  text-transform:uppercase;
-  transition:color .2s ease;
-}
-.views-btn:hover .views-text{
-  color:#fff;
-}
-.views-badge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:3px 9px;
-  border-radius:100px;
-  background:rgba(255,255,255,0.1);
-  border:1px solid rgba(255,255,255,0.2);
-  font-size:.72rem;
-  font-weight:800;
-  color:#ffffff;
-  letter-spacing:.02em;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.15);
-  transition:transform .2s ease, background .2s ease, box-shadow .2s ease;
-}
-.views-btn:hover .views-badge{
-  background:rgba(255,255,255,0.2);
-  border-color:rgba(255,255,255,0.38);
-  transform:scale(1.05);
-  box-shadow:0 0 14px rgba(255,255,255,0.25);
 }
 
 /* ═══ SCROLL HINT (PERFECTLY POSITIONED UNDER CARD, NEVER OVERLAPS) ═══ */
@@ -1001,15 +806,10 @@ u$*                     *$u</pre>
       <div class="hero">
         <div class="av-wrap">
           <div class="av-ring"><div class="av-inner"><div class="av-imgwrap"><img class="av-img" src="avatar.jpg" alt="trovixx"/></div></div></div>
-          <div class="av-dot"></div>
         </div>
         <div class="hero-info">
           <div class="hero-name">Тровикс</div>
           <div class="hero-handle"><b>@</b>trovix_x</div>
-          <div class="status-wrap">
-            <div class="sdot"></div>
-            <div><div class="stxt" id="sTxt">online</div><div class="strack" id="sTrack"></div></div>
-          </div>
         </div>
       </div>
 
@@ -1095,19 +895,6 @@ u$*                     *$u</pre>
         <a href="https://www.tiktok.com/@trovix_x" class="soc-btn" data-delay="160" target="_blank" rel="noopener" title="TikTok">
           <img src="icons/tiktok.svg" alt="TikTok"/>
         </a>
-      </div>
-
-      <div class="rep-section">
-        <button class="rep-btn" id="repBtn" title="Кинуть +rep Тровиксу">
-          <i class="ph ph-thumbs-up-fill rep-icon"></i>
-          <span class="rep-text">+rep</span>
-          <span class="rep-badge" id="repCnt">86</span>
-        </button>
-        <div class="views-btn" id="viewsBtn" title="Просмотры профиля">
-          <i class="ph ph-eye views-icon"></i>
-          <span class="views-text">views</span>
-          <span class="views-badge" id="viewsCnt">218</span>
-        </div>
       </div>
     </div>
   </div>
@@ -1254,7 +1041,7 @@ u$*                     *$u</pre>
   </div>
 </div>
 
-<footer>trovixx · 2026 · <span id="fViews">218</span> views</footer>
+<footer>trovixx · 2026</footer>
 <audio id="audio" src="listen.mp3" preload="auto"></audio>
 
 <script>
@@ -1267,7 +1054,7 @@ addEventListener('mousemove',e=>{
 });
 
 // Cursor Hover effects
-document.querySelectorAll('a, button, input, .tag, .row, .vc, .fc-card, .fc-tiktok, .podium-col, .views-btn').forEach(el => {
+document.querySelectorAll('a, button, input, .tag, .row, .vc, .fc-card, .fc-tiktok, .podium-col').forEach(el => {
   el.addEventListener('mouseenter', () => document.body.classList.add('hovered'));
   el.addEventListener('mouseleave', () => document.body.classList.remove('hovered'));
 });
@@ -1726,185 +1513,7 @@ audio.addEventListener('ended', () => {
   showToast(`▶ ${playlist[currentTrackIdx].name} — ${playlist[currentTrackIdx].artist}`);
 });
 
-// ── +REP ENGINE (GITHUB PAGES & LOCAL STORAGE PERSISTENCE) ──
-const BASE_REP = 86;
-const repBtn = document.getElementById('repBtn');
-const repCnt = document.getElementById('repCnt');
 
-// Check if this device has already given +rep
-const hasRepped = localStorage.getItem('trovix_has_repped') === 'true';
-let currentRep = BASE_REP + (hasRepped ? 1 : 0);
-
-if (repCnt) repCnt.textContent = currentRep;
-if (hasRepped && repBtn) repBtn.classList.add('repped');
-
-if (repBtn) {
-  repBtn.addEventListener('click', e => {
-    e.stopPropagation();
-
-    // If this device already gave +rep: prevent multiple reps!
-    if (localStorage.getItem('trovix_has_repped') === 'true') {
-      repBtn.classList.remove('shake');
-      void repBtn.offsetWidth;
-      repBtn.classList.add('shake');
-      if (typeof playClick === 'function') playClick();
-      showToast('Вы уже поставили +rep Тровиксу!');
-      return;
-    }
-
-    // First time +rep from this device:
-    localStorage.setItem('trovix_has_repped', 'true');
-    currentRep = BASE_REP + 1;
-    if (repCnt) repCnt.textContent = currentRep;
-    repBtn.classList.add('repped');
-
-    // Bump animation on count badge
-    repCnt.classList.remove('bump');
-    void repCnt.offsetWidth;
-    repCnt.classList.add('bump');
-
-    // Spawn floating +1
-    const floater = document.createElement('div');
-    floater.className = 'rep-floater';
-    floater.textContent = '+1';
-    floater.style.left = (e.clientX || (repBtn.getBoundingClientRect().left + repBtn.offsetWidth / 2)) + 'px';
-    floater.style.top = (e.clientY || repBtn.getBoundingClientRect().top) + 'px';
-    document.body.appendChild(floater);
-    setTimeout(() => floater.remove(), 900);
-
-    // Star sparks burst at click
-    if (typeof spawnSparks === 'function') {
-      const rect = repBtn.getBoundingClientRect();
-      spawnSparks(e.clientX || (rect.left + rect.width / 2), e.clientY || (rect.top + rect.height / 2));
-    }
-
-    // Audio SFX
-    if (typeof playSuccess === 'function') playSuccess();
-
-    showToast(`+rep засчитан! Спасибо! (Всего: ${currentRep})`);
-  });
-}
-
-// ═════════════════════════════════════════════════════════════
-// ── PROFILE VIEWS ENGINE + ANTI-CHEAT SHIELD (24H LIMIT) ────
-// ═════════════════════════════════════════════════════════════
-const BASE_VIEWS = 218; // 87 * 2.5 = 217.5 -> 218
-const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000; // 24h in ms
-
-const viewsBtn = document.getElementById('viewsBtn');
-const viewsCnt = document.getElementById('viewsCnt');
-const fViews = document.getElementById('fViews');
-
-// 1. Device & Browser Fingerprint (anti-spoofing)
-function getDeviceFP() {
-  const nav = window.navigator;
-  const scr = window.screen;
-  const str = [nav.userAgent, nav.language, scr.colorDepth, scr.width + 'x' + scr.height, new Date().getTimezoneOffset()].join('|');
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(i);
-    hash |= 0;
-  }
-  return 'fp_' + Math.abs(hash).toString(36);
-}
-
-// 2. Cookie Helper
-function getCookie(n) {
-  const m = document.cookie.match(new RegExp('(?:^|; )' + n + '=([^;]*)'));
-  return m ? decodeURIComponent(m[1]) : null;
-}
-function setCookie(n, v, maxAgeSec) {
-  try { document.cookie = `${n}=${encodeURIComponent(v)};max-age=${maxAgeSec};path=/;SameSite=Lax`; } catch (e) {}
-}
-
-const devFP = getDeviceFP();
-const kTime = 'tx_v_time_' + devFP;
-const kInc = 'tx_v_inc_' + devFP;
-
-const lastLS = parseInt(localStorage.getItem(kTime) || '0', 10);
-const lastCK = parseInt(getCookie('tx_v_cooldown') || '0', 10);
-const lastViewTS = Math.max(isNaN(lastLS) ? 0 : lastLS, isNaN(lastCK) ? 0 : lastCK);
-const currentTS = Date.now();
-
-// 3. Anti-Tamper: strictly clamp device increment to 0 or 1
-let clientInc = parseInt(localStorage.getItem(kInc) || '0', 10);
-if (isNaN(clientInc) || clientInc < 0 || clientInc > 1) {
-  clientInc = (lastViewTS > 0 && currentTS - lastViewTS < TWENTY_FOUR_HOURS) ? 1 : 0;
-  localStorage.setItem(kInc, clientInc.toString());
-}
-
-// 4. Human & Dwell Verification (Anti-Bot: real interaction + 3s dwell time)
-let sessionChecked = sessionStorage.getItem('tx_v_checked') === 'true';
-
-function registerHumanView() {
-  if (sessionChecked) return;
-  const now = Date.now();
-  if (now - lastViewTS >= TWENTY_FOUR_HOURS || lastViewTS === 0) {
-    sessionChecked = true;
-    sessionStorage.setItem('tx_v_checked', 'true');
-    clientInc = 1;
-    localStorage.setItem(kInc, '1');
-    localStorage.setItem(kTime, now.toString());
-    setCookie('tx_v_cooldown', now.toString(), 86400);
-    renderViews(BASE_VIEWS + 1);
-  }
-}
-
-// Listen for genuine user interaction (mouse move, scroll, key, touch)
-let interacted = false;
-function onHumanAction() {
-  if (interacted) return;
-  interacted = true;
-  // Require at least 2.8 seconds on page before counting
-  setTimeout(registerHumanView, 2800);
-}
-['mousemove', 'scroll', 'keydown', 'pointerdown', 'touchstart'].forEach(e => {
-  window.addEventListener(e, onHumanAction, { passive: true, once: true });
-});
-setTimeout(registerHumanView, 7000);
-
-// 5. Display Count
-const isCurrentIn24h = (lastViewTS > 0 && (currentTS - lastViewTS < TWENTY_FOUR_HOURS));
-const initialTotal = BASE_VIEWS + (isCurrentIn24h ? clientInc : 0);
-
-function renderViews(val) {
-  if (viewsCnt) viewsCnt.textContent = val;
-  if (fViews) fViews.textContent = val;
-}
-
-// Animated rolling counter on initial load
-function animateViews(target) {
-  const start = Math.max(0, target - 24);
-  const duration = 1100;
-  const startTime = performance.now();
-  function step(now) {
-    const elapsed = now - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 3);
-    const cur = Math.floor(start + (target - start) * ease);
-    renderViews(cur);
-    if (progress < 1) requestAnimationFrame(step);
-    else renderViews(target);
-  }
-  requestAnimationFrame(step);
-}
-animateViews(initialTotal);
-
-// Interactive click on views badge: NEVER adds views (purely informational + visual SFX)
-if (viewsBtn) {
-  viewsBtn.addEventListener('click', e => {
-    e.stopPropagation();
-    if (typeof spawnSparks === 'function') {
-      const rect = viewsBtn.getBoundingClientRect();
-      spawnSparks(e.clientX || (rect.left + rect.width / 2), e.clientY || (rect.top + rect.height / 2));
-    }
-    if (typeof playSuccess === 'function') playSuccess();
-    const cur = viewsCnt ? viewsCnt.textContent : initialTotal;
-    showToast(`👁️ Просмотры: ${cur}`);
-  });
-}
-
-// (status: static for GitHub Pages)
 
 // ═════════════════════════════════════════════════
 // ── CYBER AUDIO SFX ENGINE (Web Audio API) ───────
@@ -2012,10 +1621,10 @@ function playFlyout(){
 }
 
 // ── BIND SFX TO INTERACTIVE ELEMENTS (ALWAYS ACTIVE BY DEFAULT) ──
-document.querySelectorAll('.row, .tag, .soc-btn, .cb, .vc, .scroll-hint, .hero-handle, .flyout-item, .fc-card, .fc-tiktok, .podium-col, .views-btn').forEach(el => {
+document.querySelectorAll('.row, .tag, .soc-btn, .cb, .vc, .scroll-hint, .hero-handle, .flyout-item, .fc-card, .fc-tiktok, .podium-col').forEach(el => {
   el.addEventListener('mouseenter', playHover);
 });
-document.querySelectorAll('.soc-btn, .cb, .vc, .tag, .scroll-hint, .fc-tiktok, .views-btn').forEach(el => {
+document.querySelectorAll('.soc-btn, .cb, .vc, .tag, .scroll-hint, .fc-tiktok').forEach(el => {
   el.addEventListener('click', playClick);
 });
 document.querySelectorAll('.has-flyout').forEach(tag => {
