@@ -1128,8 +1128,8 @@ u$*                     *$u</pre>
       <div class="sec">now playing</div>
       <div class="player" id="player">
         <div class="prow">
-          <div class="part"><img id="tImg" src="track-icon.jpg" alt="track"/></div>
-          <div><div class="ptname" id="tName">listen!</div><div class="ptsub" id="tSub">hako</div></div>
+          <div class="part"><img id="tImg" src="vzapravdu-cover.jpg" alt="track"/></div>
+          <div><div class="ptname" id="tName">взаправду</div><div class="ptsub" id="tSub">Vulpis</div></div>
           <canvas class="viz-canvas" id="viz"></canvas>
           <div class="ctrls">
             <button class="cb" id="bPrev" title="Назад"><i class="ph ph-skip-back"></i></button>
@@ -1306,7 +1306,7 @@ u$*                     *$u</pre>
 </div>
 
 <footer>trovixx · 2026</footer>
-<audio id="audio" src="listen.mp3" preload="auto"></audio>
+<audio id="audio" src="vzapravdu.mp3" preload="auto"></audio>
 
 <!-- Firebase App & Realtime Database SDK (Compat) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -1571,6 +1571,12 @@ document.querySelectorAll('.vc').forEach(card=>{
 // ── AUDIO PLAYER & PLAYLIST ──
 const playlist = [
   {
+    name: 'взаправду',
+    artist: 'Vulpis',
+    src: 'vzapravdu.mp3',
+    cover: 'vzapravdu-cover.jpg'
+  },
+  {
     name: 'listen!',
     artist: 'hako',
     src: 'listen.mp3',
@@ -1581,12 +1587,6 @@ const playlist = [
     artist: 'EsDeeKid, Rico Ace',
     src: 'phantom.mp3',
     cover: 'phantom-cover.jpg'
-  },
-  {
-    name: 'взаправду',
-    artist: 'Vulpis',
-    src: 'vzapravdu.mp3',
-    cover: 'vzapravdu-cover.jpg'
   }
 ];
 let currentTrackIdx = 0;
@@ -1665,8 +1665,8 @@ function decodeSpectrumB64(b64) {
 }
 
 const spectrumCache = {
-  0: decodeSpectrumB64(SPEC_LISTEN),
-  1: decodeSpectrumB64(SPEC_PHANTOM)
+  1: decodeSpectrumB64(SPEC_LISTEN),
+  2: decodeSpectrumB64(SPEC_PHANTOM)
 };
 
 function initAudioVisualizer() {
