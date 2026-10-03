@@ -343,6 +343,106 @@ body.hovered #cdot{
   50%{opacity:.35;transform:scale(0.8)}
 }
 
+/* ═══ HERO STATS ROW (VIEWS & +REP) ═══ */
+.hero-stats-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.stat-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.67rem;
+  font-weight:600;
+  color:#888;
+  letter-spacing:.02em;
+  padding:4px 9px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  user-select:none;
+  cursor:default;
+  transition:all .2s ease;
+}
+.stat-pill i{
+  font-size:.82rem;
+  color:var(--accent,#fff);
+  opacity:0.85;
+}
+.stat-pill:hover{
+  background:rgba(255,255,255,0.07);
+  border-color:rgba(255,255,255,0.18);
+  color:#bbb;
+}
+.stat-val{
+  color:#eee;
+  font-weight:700;
+}
+
+.rep-pill-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.67rem;
+  font-weight:700;
+  color:#ffffff;
+  letter-spacing:.02em;
+  padding:4px 10px;
+  border-radius:8px;
+  background:linear-gradient(135deg,rgba(255,255,255,0.09) 0%,rgba(255,255,255,0.03) 100%);
+  border:1px solid rgba(255,255,255,0.16);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.18),0 2px 10px rgba(0,0,0,0.35);
+  cursor:pointer;
+  user-select:none;
+  outline:none;
+  transition:all .2s cubic-bezier(.16,1,.3,1);
+}
+.rep-pill-btn i{
+  font-size:.82rem;
+  color:var(--accent,#fff);
+  transition:transform .2s cubic-bezier(.16,1,.3,1);
+}
+.rep-pill-btn:hover{
+  background:rgba(255,255,255,0.14);
+  border-color:rgba(255,255,255,0.35);
+  color:#fff;
+  transform:translateY(-1px) scale(1.02);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.32),0 6px 18px rgba(0,0,0,0.5),0 0 14px var(--accent-soft, rgba(255,255,255,0.15));
+}
+.rep-pill-btn:hover i{
+  transform:rotate(-8deg) scale(1.15);
+}
+.rep-pill-btn:active{
+  transform:scale(0.96);
+}
+.rep-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:18px;
+  padding:1px 6px;
+  border-radius:5px;
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.16);
+  font-size:.62rem;
+  font-weight:700;
+  color:#fff;
+  transition:transform .25s cubic-bezier(.16,1,.3,1), background-color .25s ease;
+}
+.rep-pop .rep-badge{
+  animation:repBounce .45s cubic-bezier(.16,1,.3,1);
+}
+@keyframes repBounce{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.35);background:rgba(255,255,255,0.3)}
+  100%{transform:scale(1)}
+}
+
 /* ═══ DIVIDER ═══ */
 .dv{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),rgba(255,255,255,0.06),transparent);margin:0 18px;position:relative;z-index:2}
 
@@ -956,6 +1056,17 @@ u$*                     *$u</pre>
               <span id="clockTxt">--:--:--</span>
             </div>
           </div>
+          <div class="hero-stats-row">
+            <div class="stat-pill" id="viewsPill" title="Всего просмотров страницы">
+              <i class="ph ph-eye"></i>
+              <span class="stat-val" id="viewsCount">--</span>
+            </div>
+            <button class="rep-pill-btn" id="btnRep" title="Нажми, чтобы выразить респект (+rep)">
+              <i class="ph ph-thumbs-up"></i>
+              <span>+rep</span>
+              <span class="rep-badge" id="repCount">--</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1190,6 +1301,10 @@ u$*                     *$u</pre>
 <footer>trovixx · 2026</footer>
 <audio id="audio" src="listen.mp3" preload="auto"></audio>
 
+<!-- Firebase App & Realtime Database SDK (Compat) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
 <script>
 // ── CURSOR (instant, no lag) ──
 const cdot=document.getElementById('cdot'),cglow=document.getElementById('cglow');
@@ -1200,7 +1315,7 @@ addEventListener('mousemove',e=>{
 });
 
 // Cursor Hover effects
-document.querySelectorAll('a, button, input, .tag, .row, .vc, .fc-card, .fc-tiktok, .podium-col').forEach(el => {
+document.querySelectorAll('a, button, input, .tag, .row, .vc, .fc-card, .fc-tiktok, .podium-col, .stat-pill, .rep-pill-btn').forEach(el => {
   el.addEventListener('mouseenter', () => document.body.classList.add('hovered'));
   el.addEventListener('mouseleave', () => document.body.classList.remove('hovered'));
 });
@@ -1987,7 +2102,7 @@ function playThemeSwitch(themeName){
 }
 
 // ── BIND SFX TO INTERACTIVE ELEMENTS (ALWAYS ACTIVE BY DEFAULT) ──
-document.querySelectorAll('.row, .tag, .soc-btn, .cb, .vc, .scroll-hint, .hero-handle, .flyout-item, .fc-card, .fc-tiktok, .podium-col').forEach(el => {
+document.querySelectorAll('.row, .tag, .soc-btn, .cb, .vc, .scroll-hint, .hero-handle, .flyout-item, .fc-card, .fc-tiktok, .podium-col, .stat-pill, .rep-pill-btn').forEach(el => {
   el.addEventListener('mouseenter', playHover);
 });
 document.querySelectorAll('.soc-btn, .cb, .vc, .tag, .scroll-hint, .fc-tiktok').forEach(el => {
@@ -2128,6 +2243,134 @@ document.querySelectorAll('.fc-card').forEach(fc => {
     fc.style.transform = '';
   });
 });
+
+// ═════════════════════════════════════════════════════════════════
+// ── FIREBASE REALTIME STATS (VIEWS & +REP) ──────────────────────
+// ═════════════════════════════════════════════════════════════════
+// Чтобы счетчики синхронизировались в реальном времени для всех:
+// 1. Создай бесплатный проект на https://console.firebase.google.com/
+// 2. В меню: Сборка (Build) -> Realtime Database -> Создать базу данных (Тестовый режим)
+// 3. Скопируй ссылку (пример: https://trovix-bio-default-rtdb.firebaseio.com)
+// 4. Вставь ее в databaseURL ниже:
+const FIREBASE_CONFIG = {
+  databaseURL: "https://trovix-bio-default-rtdb.firebaseio.com",
+  projectId: "trovix-bio"
+};
+
+const viewsEl = document.getElementById('viewsCount');
+const repEl = document.getElementById('repCount');
+const btnRep = document.getElementById('btnRep');
+
+function formatStatNumber(num) {
+  if (typeof num !== 'number' || isNaN(num)) return '0';
+  return num.toLocaleString('ru-RU');
+}
+
+// Начальные значения из кеша (мгновенное отображение без мигания)
+let cachedViews = localStorage.getItem('trovix_views');
+let cachedReps = localStorage.getItem('trovix_reps');
+if (viewsEl && cachedViews) viewsEl.textContent = formatStatNumber(parseInt(cachedViews, 10));
+if (repEl && cachedReps) repEl.textContent = formatStatNumber(parseInt(cachedReps, 10));
+
+let fbDb = null;
+if (typeof firebase !== 'undefined' && FIREBASE_CONFIG.databaseURL) {
+  try {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    fbDb = firebase.database();
+  } catch(err) {
+    console.warn('[Firebase] Init notice:', err);
+  }
+}
+
+if (fbDb) {
+  // Реальный подсчет глобальных просмотров через облако (1 просмотр на сессию вкладки)
+  const sessionVisited = sessionStorage.getItem('trovix_session_view');
+  if (!sessionVisited) {
+    sessionStorage.setItem('trovix_session_view', '1');
+    fbDb.ref('stats/views').transaction(current => (current || 0) + 1);
+  }
+
+  // Live WebSocket слушатели (обновляются мгновенно у всех посетителей в онлайне)
+  fbDb.ref('stats/views').on('value', snap => {
+    const v = snap.val();
+    const count = v !== null ? v : 1;
+    if (viewsEl) viewsEl.textContent = formatStatNumber(count);
+    localStorage.setItem('trovix_views', count.toString());
+  });
+
+  fbDb.ref('stats/reps').on('value', snap => {
+    const r = snap.val();
+    const count = r !== null ? r : 0;
+    if (repEl) repEl.textContent = formatStatNumber(count);
+    localStorage.setItem('trovix_reps', count.toString());
+  });
+} else {
+  // REST fallback, если SDK или WebSocket заблокированы
+  const dbBase = FIREBASE_CONFIG.databaseURL.replace(/\/+$/, '');
+  const sessionVisited = sessionStorage.getItem('trovix_session_view');
+
+  if (!sessionVisited) {
+    sessionStorage.setItem('trovix_session_view', '1');
+    fetch(dbBase + '/stats/views.json')
+      .then(res => res.json())
+      .then(cur => {
+        const next = (cur || 0) + 1;
+        fetch(dbBase + '/stats/views.json', { method: 'PUT', body: JSON.stringify(next) }).catch(()=>{});
+        if (viewsEl) viewsEl.textContent = formatStatNumber(next);
+        localStorage.setItem('trovix_views', next.toString());
+      }).catch(()=>{});
+  } else {
+    fetch(dbBase + '/stats/views.json').then(r=>r.json()).then(v=>{
+      if (viewsEl && v !== null) viewsEl.textContent = formatStatNumber(v);
+    }).catch(()=>{});
+  }
+
+  fetch(dbBase + '/stats/reps.json').then(r=>r.json()).then(r=>{
+    if (repEl && r !== null) repEl.textContent = formatStatNumber(r);
+  }).catch(()=>{});
+}
+
+// Интерактивная кнопка +rep
+if (btnRep) {
+  btnRep.addEventListener('click', e => {
+    e.stopPropagation();
+
+    // Защита от авто-спама: кулдаун 10 секунд
+    const lastRepTime = parseInt(localStorage.getItem('trovix_last_rep') || '0', 10);
+    const now = Date.now();
+    const cooldownMs = 10000;
+    if (now - lastRepTime < cooldownMs) {
+      const waitSec = Math.ceil((cooldownMs - (now - lastRepTime)) / 1000);
+      showToast(`Подожди ${waitSec} сек перед следующим +rep!`);
+      if (typeof playClick === 'function') playClick();
+      return;
+    }
+    localStorage.setItem('trovix_last_rep', now.toString());
+
+    // Звуковой отклик и сияющие звезды
+    if (typeof playSuccess === 'function') playSuccess();
+    if (typeof spawnStars === 'function') spawnStars(e.clientX, e.clientY);
+
+    btnRep.classList.add('rep-pop');
+    setTimeout(() => btnRep.classList.remove('rep-pop'), 500);
+
+    if (fbDb) {
+      fbDb.ref('stats/reps').transaction(c => (c || 0) + 1);
+      showToast('+rep отправлен! Респект 🔥');
+    } else {
+      const dbBase = FIREBASE_CONFIG.databaseURL.replace(/\/+$/, '');
+      fetch(dbBase + '/stats/reps.json')
+        .then(r => r.json())
+        .then(cur => {
+          const next = (cur || 0) + 1;
+          fetch(dbBase + '/stats/reps.json', { method: 'PUT', body: JSON.stringify(next) }).catch(()=>{});
+          if (repEl) repEl.textContent = formatStatNumber(next);
+          localStorage.setItem('trovix_reps', next.toString());
+        }).catch(()=>{});
+      showToast('+rep отправлен! Респект 🔥');
+    }
+  });
+}
 </script>
 </body>
 </html>
