@@ -442,6 +442,13 @@ body.hovered #cdot{
   40%{transform:scale(1.35);background:rgba(255,255,255,0.3)}
   100%{transform:scale(1)}
 }
+.rep-pill-btn.is-repped{
+  border-color:rgba(255,255,255,0.28);
+  background:rgba(255,255,255,0.07);
+}
+.rep-pill-btn.is-repped i{
+  filter:drop-shadow(0 0 6px var(--accent-glow, rgba(255,255,255,0.6)));
+}
 
 /* ═══ DIVIDER ═══ */
 .dv{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),rgba(255,255,255,0.06),transparent);margin:0 18px;position:relative;z-index:2}
@@ -2245,17 +2252,14 @@ document.querySelectorAll('.fc-card').forEach(fc => {
 });
 
 // ═════════════════════════════════════════════════════════════════
-// ── FIREBASE REALTIME STATS (VIEWS & +REP) ──────────────────────
+// ── FIREBASE REALTIME STATS (VIEWS & +REP) С КД 24Ч НА IP/УСТР ──
 // ═════════════════════════════════════════════════════════════════
-// Чтобы счетчики синхронизировались в реальном времени для всех:
-// 1. Создай бесплатный проект на https://console.firebase.google.com/
-// 2. В меню: Сборка (Build) -> Realtime Database -> Создать базу данных (Тестовый режим)
-// 3. Скопируй ссылку (пример: https://trovix-bio-default-rtdb.firebaseio.com)
-// 4. Вставь ее в databaseURL ниже:
 const FIREBASE_CONFIG = {
   databaseURL: "https://trovix-bio-default-rtdb.firebaseio.com",
   projectId: "trovix-bio"
 };
+
+const COOLDOWN_24H = 24 * 60 * 60 * 1000; // 24 часа
 
 const viewsEl = document.getElementById('viewsCount');
 const repEl = document.getElementById('repCount');
@@ -2266,12 +2270,73 @@ function formatStatNumber(num) {
   return num.toLocaleString('ru-RU');
 }
 
-// Начальные значения из кеша (мгновенное отображение без мигания)
+// 1. Уникальный ID устройства (сохраняется в localStorage)
+let deviceId = localStorage.getItem('trovix_device_id');
+if (!deviceId) {
+  deviceId = 'd_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+  localStorage.setItem('trovix_device_id', deviceId);
+}
+
+// Начальное отображение из кеша
 let cachedViews = localStorage.getItem('trovix_views');
 let cachedReps = localStorage.getItem('trovix_reps');
 if (viewsEl && cachedViews) viewsEl.textContent = formatStatNumber(parseInt(cachedViews, 10));
 if (repEl && cachedReps) repEl.textContent = formatStatNumber(parseInt(cachedReps, 10));
 
+// Проверка: уже накидывал ли пользователь +rep на этом устройстве (1 раз навсегда)
+const hasReppedLocalInit = localStorage.getItem('trovix_has_repped') || localStorage.getItem('trovix_last_rep_ts');
+if (btnRep && hasReppedLocalInit) {
+  btnRep.classList.add('is-repped');
+  btnRep.title = 'Вы уже оставили +rep (1 раз с устройства/IP)';
+}
+
+// 2. Определение внешнего IP с кешированием и таймаутом
+function sanitizeKey(str) {
+  return String(str || '').replace(/[^a-zA-Z0-9_-]/g, '_');
+}
+
+let cachedIp = null;
+try {
+  const savedIpObj = JSON.parse(localStorage.getItem('trovix_ip_cache') || 'null');
+  if (savedIpObj && savedIpObj.ip && (Date.now() - savedIpObj.ts < 2 * 60 * 60 * 1000)) {
+    cachedIp = savedIpObj.ip;
+  }
+} catch(e) {}
+
+let ipFetchPromise = null;
+function getClientIP() {
+  if (cachedIp) return Promise.resolve(cachedIp);
+  if (ipFetchPromise) return ipFetchPromise;
+
+  ipFetchPromise = new Promise(resolve => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 2400);
+
+    fetch('https://api64.ipify.org?format=json', { signal: controller.signal })
+      .then(r => r.json())
+      .then(data => {
+        clearTimeout(timeout);
+        if (data && data.ip) {
+          const ipStr = String(data.ip).trim();
+          cachedIp = ipStr;
+          try {
+            localStorage.setItem('trovix_ip_cache', JSON.stringify({ ip: ipStr, ts: Date.now() }));
+          } catch(e) {}
+          resolve(ipStr);
+        } else {
+          resolve(null);
+        }
+      })
+      .catch(() => {
+        clearTimeout(timeout);
+        resolve(null);
+      });
+  });
+
+  return ipFetchPromise;
+}
+
+// 3. Подключение к Firebase Realtime Database
 let fbDb = null;
 if (typeof firebase !== 'undefined' && FIREBASE_CONFIG.databaseURL) {
   try {
@@ -2282,92 +2347,245 @@ if (typeof firebase !== 'undefined' && FIREBASE_CONFIG.databaseURL) {
   }
 }
 
+// 4. Подписка на обновление цифр в реальном времени (WebSockets)
 if (fbDb) {
-  // Реальный подсчет глобальных просмотров через облако (1 просмотр на сессию вкладки)
-  const sessionVisited = sessionStorage.getItem('trovix_session_view');
-  if (!sessionVisited) {
-    sessionStorage.setItem('trovix_session_view', '1');
-    fbDb.ref('stats/views').transaction(current => (current || 0) + 1);
-  }
-
-  // Live WebSocket слушатели (обновляются мгновенно у всех посетителей в онлайне)
   fbDb.ref('stats/views').on('value', snap => {
     const v = snap.val();
-    const count = v !== null ? v : 1;
-    if (viewsEl) viewsEl.textContent = formatStatNumber(count);
-    localStorage.setItem('trovix_views', count.toString());
+    if (v !== null && viewsEl) {
+      viewsEl.textContent = formatStatNumber(v);
+      localStorage.setItem('trovix_views', v.toString());
+    }
   });
 
   fbDb.ref('stats/reps').on('value', snap => {
     const r = snap.val();
-    const count = r !== null ? r : 0;
-    if (repEl) repEl.textContent = formatStatNumber(count);
-    localStorage.setItem('trovix_reps', count.toString());
+    if (r !== null && repEl) {
+      repEl.textContent = formatStatNumber(r);
+      localStorage.setItem('trovix_reps', r.toString());
+    }
   });
 } else {
-  // REST fallback, если SDK или WebSocket заблокированы
+  // REST fallback
   const dbBase = FIREBASE_CONFIG.databaseURL.replace(/\/+$/, '');
-  const sessionVisited = sessionStorage.getItem('trovix_session_view');
-
-  if (!sessionVisited) {
-    sessionStorage.setItem('trovix_session_view', '1');
-    fetch(dbBase + '/stats/views.json')
-      .then(res => res.json())
-      .then(cur => {
-        const next = (cur || 0) + 1;
-        fetch(dbBase + '/stats/views.json', { method: 'PUT', body: JSON.stringify(next) }).catch(()=>{});
-        if (viewsEl) viewsEl.textContent = formatStatNumber(next);
-        localStorage.setItem('trovix_views', next.toString());
-      }).catch(()=>{});
-  } else {
-    fetch(dbBase + '/stats/views.json').then(r=>r.json()).then(v=>{
-      if (viewsEl && v !== null) viewsEl.textContent = formatStatNumber(v);
-    }).catch(()=>{});
-  }
-
+  fetch(dbBase + '/stats/views.json').then(r=>r.json()).then(v=>{
+    if (viewsEl && v !== null) viewsEl.textContent = formatStatNumber(v);
+  }).catch(()=>{});
   fetch(dbBase + '/stats/reps.json').then(r=>r.json()).then(r=>{
     if (repEl && r !== null) repEl.textContent = formatStatNumber(r);
   }).catch(()=>{});
 }
 
-// Интерактивная кнопка +rep
-if (btnRep) {
-  btnRep.addEventListener('click', e => {
-    e.stopPropagation();
+// 5. Учет уникальных просмотров (1 просмотр в 24 часа с устройства / IP)
+async function registerUniqueView() {
+  const now = Date.now();
+  const localLastView = parseInt(localStorage.getItem('trovix_last_view_ts') || '0', 10);
 
-    // Защита от авто-спама: кулдаун 10 секунд
-    const lastRepTime = parseInt(localStorage.getItem('trovix_last_rep') || '0', 10);
-    const now = Date.now();
-    const cooldownMs = 10000;
-    if (now - lastRepTime < cooldownMs) {
-      const waitSec = Math.ceil((cooldownMs - (now - lastRepTime)) / 1000);
-      showToast(`Подожди ${waitSec} сек перед следующим +rep!`);
+  // 1-й барьер: локальный кулдаун устройства
+  if (now - localLastView < COOLDOWN_24H) {
+    return;
+  }
+
+  const ip = await getClientIP();
+  const ipKey = ip ? sanitizeKey(ip) : null;
+  const devKey = sanitizeKey(deviceId);
+
+  if (fbDb) {
+    let canCount = true;
+
+    // 2-й барьер: проверка по IP в Firebase
+    if (ipKey) {
+      try {
+        const ipSnap = await fbDb.ref('tracking/ips/' + ipKey + '/lastView').once('value');
+        const ipLastView = ipSnap.val();
+        if (ipLastView && (now - ipLastView < COOLDOWN_24H)) {
+          canCount = false;
+          localStorage.setItem('trovix_last_view_ts', ipLastView.toString());
+        }
+      } catch(e) {}
+    }
+
+    // 3-й барьер: проверка по Device ID в Firebase
+    if (canCount && devKey) {
+      try {
+        const devSnap = await fbDb.ref('tracking/devs/' + devKey + '/lastView').once('value');
+        const devLastView = devSnap.val();
+        if (devLastView && (now - devLastView < COOLDOWN_24H)) {
+          canCount = false;
+          localStorage.setItem('trovix_last_view_ts', devLastView.toString());
+        }
+      } catch(e) {}
+    }
+
+    if (canCount) {
+      localStorage.setItem('trovix_last_view_ts', now.toString());
+      fbDb.ref('stats/views').transaction(c => (c || 0) + 1);
+      if (ipKey) fbDb.ref('tracking/ips/' + ipKey + '/lastView').set(now);
+      if (devKey) fbDb.ref('tracking/devs/' + devKey + '/lastView').set(now);
+    }
+
+    // Проверяем статус +rep для этого IP на сервере
+    if (ipKey && btnRep && !localStorage.getItem('trovix_has_repped')) {
+      fbDb.ref('tracking/ips/' + ipKey + '/hasRep').once('value').then(snap => {
+        if (snap.val()) {
+          localStorage.setItem('trovix_has_repped', '1');
+          btnRep.classList.add('is-repped');
+          btnRep.title = 'Вы уже оставили +rep (1 раз с устройства/IP)';
+        }
+      }).catch(()=>{});
+    }
+  } else {
+    // REST fallback
+    const dbBase = FIREBASE_CONFIG.databaseURL.replace(/\/+$/, '');
+    let canCount = true;
+
+    if (ipKey) {
+      try {
+        const res = await fetch(dbBase + '/tracking/ips/' + ipKey + '/lastView.json');
+        const ipLastView = await res.json();
+        if (ipLastView && (now - ipLastView < COOLDOWN_24H)) {
+          canCount = false;
+          localStorage.setItem('trovix_last_view_ts', ipLastView.toString());
+        }
+      } catch(e) {}
+    }
+
+    if (canCount) {
+      localStorage.setItem('trovix_last_view_ts', now.toString());
+      fetch(dbBase + '/stats/views.json')
+        .then(r => r.json())
+        .then(cur => {
+          const next = (cur || 0) + 1;
+          fetch(dbBase + '/stats/views.json', { method: 'PUT', body: JSON.stringify(next) }).catch(()=>{});
+          if (ipKey) fetch(dbBase + '/tracking/ips/' + ipKey + '/lastView.json', { method: 'PUT', body: JSON.stringify(now) }).catch(()=>{});
+          if (devKey) fetch(dbBase + '/tracking/devs/' + devKey + '/lastView.json', { method: 'PUT', body: JSON.stringify(now) }).catch(()=>{});
+        }).catch(()=>{});
+    }
+
+    if (ipKey && btnRep && !localStorage.getItem('trovix_has_repped')) {
+      fetch(dbBase + '/tracking/ips/' + ipKey + '/hasRep.json').then(r=>r.json()).then(val => {
+        if (val) {
+          localStorage.setItem('trovix_has_repped', '1');
+          btnRep.classList.add('is-repped');
+          btnRep.title = 'Вы уже оставили +rep (1 раз с устройства/IP)';
+        }
+      }).catch(()=>{});
+    }
+  }
+}
+
+registerUniqueView();
+
+// 6. Интерактивная кнопка +rep (строго 1 раз навсегда с одного устройства / IP)
+let isRepping = false;
+if (btnRep) {
+  btnRep.addEventListener('click', async e => {
+    e.stopPropagation();
+    if (isRepping) return;
+
+    // 1-й барьер: проверка локального хранилища устройства
+    const hasReppedLocal = localStorage.getItem('trovix_has_repped') || localStorage.getItem('trovix_last_rep_ts');
+    if (hasReppedLocal) {
+      btnRep.classList.add('is-repped');
+      showToast('Вы уже оставили +rep! (Разрешено только 1 раз с устройства/IP)');
       if (typeof playClick === 'function') playClick();
       return;
     }
-    localStorage.setItem('trovix_last_rep', now.toString());
 
-    // Звуковой отклик и сияющие звезды
-    if (typeof playSuccess === 'function') playSuccess();
-    if (typeof spawnStars === 'function') spawnStars(e.clientX, e.clientY);
+    isRepping = true;
+    const ip = await getClientIP();
+    const ipKey = ip ? sanitizeKey(ip) : null;
+    const devKey = sanitizeKey(deviceId);
 
-    btnRep.classList.add('rep-pop');
-    setTimeout(() => btnRep.classList.remove('rep-pop'), 500);
+    let canRep = true;
 
     if (fbDb) {
+      // 2-й барьер: проверка по IP в базе
+      if (ipKey) {
+        try {
+          const ipSnap = await fbDb.ref('tracking/ips/' + ipKey + '/hasRep').once('value');
+          if (ipSnap.val()) canRep = false;
+        } catch(err) {}
+      }
+
+      // 3-й барьер: проверка по Device ID в базе
+      if (canRep && devKey) {
+        try {
+          const devSnap = await fbDb.ref('tracking/devs/' + devKey + '/hasRep').once('value');
+          if (devSnap.val()) canRep = false;
+        } catch(err) {}
+      }
+
+      if (!canRep) {
+        localStorage.setItem('trovix_has_repped', '1');
+        btnRep.classList.add('is-repped');
+        btnRep.title = 'Вы уже оставили +rep (1 раз с устройства/IP)';
+        showToast('С вашего IP/устройства уже был оставлен +rep!');
+        if (typeof playClick === 'function') playClick();
+        isRepping = false;
+        return;
+      }
+
+      // ОДОБРЕНО: записываем +rep (1 раз навсегда)
+      localStorage.setItem('trovix_has_repped', '1');
+      btnRep.classList.add('is-repped');
+      btnRep.title = 'Вы уже оставили +rep (1 раз с устройства/IP)';
+
       fbDb.ref('stats/reps').transaction(c => (c || 0) + 1);
-      showToast('+rep отправлен! Респект 🔥');
+      if (ipKey) fbDb.ref('tracking/ips/' + ipKey + '/hasRep').set(Date.now());
+      if (devKey) fbDb.ref('tracking/devs/' + devKey + '/hasRep').set(Date.now());
+
+      if (typeof playSuccess === 'function') playSuccess();
+      if (typeof spawnStars === 'function') spawnStars(e.clientX, e.clientY);
+
+      btnRep.classList.add('rep-pop');
+      setTimeout(() => btnRep.classList.remove('rep-pop'), 500);
+
+      showToast('+rep засчитан! Спасибо за респект 🔥');
+      isRepping = false;
     } else {
+      // REST fallback
       const dbBase = FIREBASE_CONFIG.databaseURL.replace(/\/+$/, '');
+
+      if (ipKey) {
+        try {
+          const res = await fetch(dbBase + '/tracking/ips/' + ipKey + '/hasRep.json');
+          const ipRep = await res.json();
+          if (ipRep) canRep = false;
+        } catch(err) {}
+      }
+
+      if (!canRep) {
+        localStorage.setItem('trovix_has_repped', '1');
+        btnRep.classList.add('is-repped');
+        btnRep.title = 'Вы уже оставили +rep (1 раз с устройства/IP)';
+        showToast('С вашего IP/устройства уже был оставлен +rep!');
+        if (typeof playClick === 'function') playClick();
+        isRepping = false;
+        return;
+      }
+
+      localStorage.setItem('trovix_has_repped', '1');
+      btnRep.classList.add('is-repped');
+      btnRep.title = 'Вы уже оставили +rep (1 раз с устройства/IP)';
+
       fetch(dbBase + '/stats/reps.json')
         .then(r => r.json())
         .then(cur => {
           const next = (cur || 0) + 1;
           fetch(dbBase + '/stats/reps.json', { method: 'PUT', body: JSON.stringify(next) }).catch(()=>{});
+          if (ipKey) fetch(dbBase + '/tracking/ips/' + ipKey + '/hasRep.json', { method: 'PUT', body: JSON.stringify(Date.now()) }).catch(()=>{});
+          if (devKey) fetch(dbBase + '/tracking/devs/' + devKey + '/hasRep.json', { method: 'PUT', body: JSON.stringify(Date.now()) }).catch(()=>{});
           if (repEl) repEl.textContent = formatStatNumber(next);
-          localStorage.setItem('trovix_reps', next.toString());
         }).catch(()=>{});
-      showToast('+rep отправлен! Респект 🔥');
+
+      if (typeof playSuccess === 'function') playSuccess();
+      if (typeof spawnStars === 'function') spawnStars(e.clientX, e.clientY);
+
+      btnRep.classList.add('rep-pop');
+      setTimeout(() => btnRep.classList.remove('rep-pop'), 500);
+
+      showToast('+rep засчитан! Спасибо за респект 🔥');
+      isRepping = false;
     }
   });
 }
