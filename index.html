@@ -9,6 +9,30 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
+:root{
+  --accent:#ffffff;
+  --accent-rgb:255,255,255;
+  --accent-glow:rgba(255,255,255,0.45);
+  --accent-soft:rgba(255,255,255,0.08);
+}
+[data-theme="crimson"]{
+  --accent:#ff3344;
+  --accent-rgb:255,51,68;
+  --accent-glow:rgba(255,51,68,0.55);
+  --accent-soft:rgba(255,51,68,0.12);
+}
+[data-theme="phantom"]{
+  --accent:#b366ff;
+  --accent-rgb:179,102,255;
+  --accent-glow:rgba(179,102,255,0.55);
+  --accent-soft:rgba(179,102,255,0.12);
+}
+[data-theme="ice"]{
+  --accent:#00e5ff;
+  --accent-rgb:0,229,255;
+  --accent-glow:rgba(0,229,255,0.55);
+  --accent-soft:rgba(0,229,255,0.12);
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;cursor:none}
 html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
 body{background:#000;color:#fff;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;}
@@ -17,23 +41,24 @@ body{background:#000;color:#fff;font-family:'Inter',-apple-system,BlinkMacSystem
 #cdot{
   position:fixed;pointer-events:none;z-index:99999;
   width:8px;height:8px;border-radius:50%;
-  background:#fff;transform:translate(-50%,-50%);
-  box-shadow:0 0 12px #fff,0 0 24px rgba(255,255,255,0.5);
-  transition:width .18s ease,height .18s ease,background .18s ease,box-shadow .18s ease,border .18s ease;
+  background:var(--accent,#fff);transform:translate(-50%,-50%);
+  box-shadow:0 0 12px var(--accent,#fff),0 0 24px var(--accent-glow);
+  transition:width .18s ease,height .18s ease,background .25s ease,box-shadow .25s ease,border .18s ease;
   will-change:left,top;
 }
 #cglow{
   position:fixed;pointer-events:none;z-index:99998;
   width:260px;height:260px;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,255,255,0.06) 0%,rgba(255,255,255,0.015) 45%,transparent 70%);
+  background:radial-gradient(circle,var(--accent-soft,rgba(255,255,255,0.06)) 0%,transparent 70%);
   transform:translate(-50%,-50%);
+  transition:background .35s ease;
   will-change:left,top;
 }
 body.hovered #cdot{
   width:26px;height:26px;
-  background:rgba(255,255,255,0.18);
-  border:1.5px solid rgba(255,255,255,0.9);
-  box-shadow:0 0 16px rgba(255,255,255,0.4),inset 0 0 8px rgba(255,255,255,0.2);
+  background:var(--accent-soft,rgba(255,255,255,0.18));
+  border:1.5px solid var(--accent,#fff);
+  box-shadow:0 0 16px var(--accent-glow),inset 0 0 8px var(--accent-soft);
   backdrop-filter:blur(3px);
 }
 
@@ -77,11 +102,47 @@ body.hovered #cdot{
   font-family:"Courier New",Consolas,monospace;
   font-size:clamp(16px,3.9vh,42px);
   line-height:1.16;
-  color:#fff;
+  color:var(--accent,#fff);
   white-space:pre;
   letter-spacing:-0.03em;
-  text-shadow:0 0 35px rgba(255,255,255,0.4);
+  text-shadow:0 0 35px var(--accent-glow,rgba(255,255,255,0.4));
+  transition:color .35s ease, text-shadow .35s ease;
 }
+
+/* ═══ THEME ACCENT HUD (TOP RIGHT) ═══ */
+.theme-hud{
+  position:fixed;top:18px;right:22px;z-index:99990;
+  display:flex;align-items:center;gap:6px;
+  padding:6px 10px;border-radius:100px;
+  background:rgba(10,10,16,0.7);
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.15);
+  transition:all .25s cubic-bezier(.16,1,.3,1);
+}
+.theme-hud:hover{
+  border-color:rgba(255,255,255,0.28);
+  box-shadow:0 12px 32px rgba(0,0,0,0.8),0 0 16px var(--accent-soft);
+}
+.theme-dots{display:flex;align-items:center;gap:6px}
+.theme-btn{
+  width:17px;height:17px;border-radius:50%;border:none;outline:none;
+  cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;
+  background:transparent;padding:0;transition:transform .2s cubic-bezier(.16,1,.3,1);
+}
+.theme-btn::before{
+  content:'';width:10px;height:10px;border-radius:50%;
+  background:var(--t-col);box-shadow:0 0 8px var(--t-col);
+  transition:all .2s ease;
+}
+.theme-btn:hover{transform:scale(1.3)}
+.theme-btn.active::after{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  border:1.5px solid #fff;box-shadow:0 0 10px var(--t-col);
+}
+
+
+
 
 /* ═══ TAG FLYOUT POPOVER (GAMING & VIBECODING) ═══ */
 .has-flyout{
@@ -246,9 +307,41 @@ body.hovered #cdot{
 .av-imgwrap{width:100%;height:100%;border-radius:50%;overflow:hidden}
 .av-img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(100%) contrast(1.15)}
 .hero-info{flex:1;min-width:0}
-.hero-name{font-family:'Inter',sans-serif;font-size:1.68rem;font-weight:800;letter-spacing:-.035em;color:#fff;line-height:1;margin-bottom:6px;text-shadow:0 0 35px rgba(255,255,255,0.25)}
-.hero-handle{font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:500;color:#888;letter-spacing:.02em;margin-bottom:0}
-.hero-handle b{color:#fff;font-weight:600}
+.hero-name{font-family:'Inter',sans-serif;font-size:1.68rem;font-weight:800;letter-spacing:-.035em;color:#fff;line-height:1;margin-bottom:8px;text-shadow:0 0 35px var(--accent-glow, rgba(255,255,255,0.25))}
+.hero-meta-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hero-handle{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'JetBrains Mono',monospace;font-size:.74rem;font-weight:500;
+  color:#bbb;letter-spacing:.02em;margin-bottom:0;
+  padding:4px 9px;border-radius:8px;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+  transition:all .2s cubic-bezier(.16,1,.3,1);user-select:none;cursor:pointer;
+}
+.hero-handle:hover{
+  background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.32);
+  color:#fff;transform:translateY(-1px);
+  box-shadow:0 4px 14px rgba(0,0,0,0.4),0 0 12px var(--accent-soft);
+}
+.hero-handle b{color:var(--accent,#fff);font-weight:700}
+.handle-copy-ico{font-size:.76rem;opacity:.55;transition:transform .2s ease, opacity .2s ease}
+.hero-handle:hover .handle-copy-ico{opacity:1;transform:scale(1.2)}
+
+.live-clock-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:600;
+  color:#888;letter-spacing:.04em;
+  padding:4px 9px;border-radius:8px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);
+}
+.live-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--accent,#fff);box-shadow:0 0 8px var(--accent,#fff);
+  animation:livePulse 2s infinite ease-in-out;
+}
+@keyframes livePulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.35;transform:scale(0.8)}
+}
 
 /* ═══ DIVIDER ═══ */
 .dv{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),rgba(255,255,255,0.06),transparent);margin:0 18px;position:relative;z-index:2}
@@ -523,18 +616,32 @@ input.vol::-webkit-slider-thumb{
   box-shadow:inset 0 1.5px 1px rgba(255,255,255,0.38),0 24px 60px rgba(0,0,0,0.7);
 }
 .rank-1 .fc-card{
-  border-color:rgba(255,215,0,0.32);
-  background:linear-gradient(180deg,rgba(255,215,0,0.06) 0%,rgba(255,255,255,0.04) 100%);
-  box-shadow:inset 0 1.5px 1px rgba(255,255,255,0.35),0 20px 50px rgba(0,0,0,0.7),0 0 35px rgba(255,215,0,0.08);
+  border-color:rgba(255,215,0,0.38);
+  background:linear-gradient(180deg,rgba(255,215,0,0.08) 0%,rgba(255,255,255,0.04) 100%);
+  box-shadow:inset 0 1.5px 1px rgba(255,255,255,0.35),0 20px 50px rgba(0,0,0,0.7),0 0 35px rgba(255,215,0,0.12);
   padding:28px 18px 22px;
 }
 .rank-1:hover .fc-card{
-  border-color:rgba(255,215,0,0.55);
-  box-shadow:inset 0 1.5px 1px rgba(255,255,255,0.5),0 28px 70px rgba(0,0,0,0.85),0 0 45px rgba(255,215,0,0.2);
+  border-color:rgba(255,215,0,0.65);
+  box-shadow:inset 0 1.5px 1px rgba(255,255,255,0.5),0 28px 70px rgba(0,0,0,0.85),0 0 45px rgba(255,215,0,0.28);
 }
-.fc-card.empty{
-  border-style:dashed;border-color:rgba(255,255,255,0.1);
-  background:rgba(255,255,255,0.02);
+.rank-2 .fc-card{
+  border-color:rgba(224,228,235,0.28);
+  background:linear-gradient(180deg,rgba(224,228,235,0.06) 0%,rgba(255,255,255,0.03) 100%);
+  box-shadow:inset 0 1.5px 1px rgba(255,255,255,0.28),0 18px 45px rgba(0,0,0,0.65),0 0 25px rgba(224,228,235,0.08);
+}
+.rank-2:hover .fc-card{
+  border-color:rgba(224,228,235,0.55);
+  box-shadow:inset 0 1.5px 1px rgba(255,255,255,0.45),0 24px 60px rgba(0,0,0,0.8),0 0 35px rgba(224,228,235,0.2);
+}
+.rank-3 .fc-card{
+  border-color:rgba(217,125,67,0.28);
+  background:linear-gradient(180deg,rgba(217,125,67,0.06) 0%,rgba(255,255,255,0.03) 100%);
+  box-shadow:inset 0 1.5px 1px rgba(255,255,255,0.25),0 16px 40px rgba(0,0,0,0.6),0 0 25px rgba(217,125,67,0.08);
+}
+.rank-3:hover .fc-card{
+  border-color:rgba(217,125,67,0.55);
+  box-shadow:inset 0 1.5px 1px rgba(255,255,255,0.4),0 24px 60px rgba(0,0,0,0.8),0 0 35px rgba(217,125,67,0.2);
 }
 
 /* ── PLACE BADGE ── */
@@ -549,10 +656,22 @@ input.vol::-webkit-slider-thumb{
   box-shadow:inset 0 1px 0 rgba(255,255,255,0.2);
 }
 .rank-1 .fc-place{
-  border-color:rgba(255,215,0,0.45);
-  background:rgba(255,215,0,0.14);
+  border-color:rgba(255,215,0,0.5);
+  background:rgba(255,215,0,0.16);
   color:#ffe066;
-  box-shadow:inset 0 1px 0 rgba(255,215,0,0.3),0 0 12px rgba(255,215,0,0.2);
+  box-shadow:inset 0 1px 0 rgba(255,215,0,0.35),0 0 14px rgba(255,215,0,0.28);
+}
+.rank-2 .fc-place{
+  border-color:rgba(224,228,235,0.45);
+  background:rgba(224,228,235,0.12);
+  color:#f0f3fa;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.3),0 0 12px rgba(224,228,235,0.2);
+}
+.rank-3 .fc-place{
+  border-color:rgba(217,125,67,0.45);
+  background:rgba(217,125,67,0.14);
+  color:#ffbe98;
+  box-shadow:inset 0 1px 0 rgba(255,190,152,0.3),0 0 12px rgba(217,125,67,0.2);
 }
 .fc-crown{font-size:1rem;line-height:1}
 .fc-rank{line-height:1}
@@ -571,21 +690,21 @@ input.vol::-webkit-slider-thumb{
 }
 .fc-ring.top-1-ring{
   background:linear-gradient(135deg,#ffe066 0%,#ffffff 50%,#ffd700 100%);
-  box-shadow:0 0 28px rgba(255,215,0,0.45);
+  box-shadow:0 0 30px rgba(255,215,0,0.5);
 }
-.fc-ring.empty-ring{
-  background:rgba(255,255,255,0.08);border:2px dashed rgba(255,255,255,0.2);
-  box-shadow:none;padding:0;
+.fc-ring.top-2-ring{
+  background:linear-gradient(135deg,#ffffff 0%,#a8b3cf 50%,#e4e8f2 100%);
+  box-shadow:0 0 22px rgba(224,228,235,0.4);
+}
+.fc-ring.top-3-ring{
+  background:linear-gradient(135deg,#ffbe98 0%,#d97d43 50%,#8c4015 100%);
+  box-shadow:0 0 20px rgba(217,125,67,0.45);
 }
 .fc-av{
   width:100%;height:100%;object-fit:cover;display:block;
   border-radius:50%;transition:transform .4s ease;
 }
 .podium-col:hover .fc-av{transform:scale(1.08)}
-.fc-av-placeholder{
-  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
-  font-size:1.8rem;color:#666;
-}
 .fc-badge{
   position:absolute;bottom:-3px;right:-3px;
   padding:2px 7px;border-radius:8px;
@@ -594,8 +713,16 @@ input.vol::-webkit-slider-thumb{
   box-shadow:0 2px 8px rgba(0,0,0,0.8);
 }
 .fc-badge.badge-gold{
-  border-color:rgba(255,215,0,0.6);color:#ffd700;
-  box-shadow:0 2px 10px rgba(255,215,0,0.35);
+  border-color:rgba(255,215,0,0.65);color:#ffd700;
+  box-shadow:0 2px 10px rgba(255,215,0,0.4);
+}
+.fc-badge.badge-silver{
+  border-color:rgba(224,228,235,0.6);color:#e0e4eb;
+  box-shadow:0 2px 10px rgba(224,228,235,0.3);
+}
+.fc-badge.badge-bronze{
+  border-color:rgba(217,125,67,0.6);color:#ff9d5c;
+  box-shadow:0 2px 10px rgba(217,125,67,0.3);
 }
 
 /* ── NICKNAMES (NO SUBTITLES) ── */
@@ -796,6 +923,16 @@ footer{position:relative;z-index:10;text-align:center;padding:22px 20px 30px;fon
 u$*                     *$u</pre>
 </div>
 
+<!-- THEME ACCENT HUD (TOP RIGHT) -->
+<div class="theme-hud" id="themeHud" title="Сменить акцент темы">
+  <div class="theme-dots">
+    <button class="theme-btn active" data-t="chrome" style="--t-col:#ffffff;" title="Chrome White"></button>
+    <button class="theme-btn" data-t="crimson" style="--t-col:#ff3344;" title="Crimson Red"></button>
+    <button class="theme-btn" data-t="phantom" style="--t-col:#b366ff;" title="Phantom Purple"></button>
+    <button class="theme-btn" data-t="ice" style="--t-col:#00e5ff;" title="Cyber Ice"></button>
+  </div>
+</div>
+
 <!-- PAGE 1 -->
 <div class="page1">
   <div class="card-perspective" id="cardWrap">
@@ -809,7 +946,16 @@ u$*                     *$u</pre>
         </div>
         <div class="hero-info">
           <div class="hero-name">Тровикс</div>
-          <div class="hero-handle"><b>@</b>trovix_x</div>
+          <div class="hero-meta-row">
+            <div class="hero-handle" id="heroHandle" title="Нажми, чтобы скопировать @trovix_x">
+              <b>@</b>trovix_x
+              <i class="ph ph-copy handle-copy-ico"></i>
+            </div>
+            <div class="live-clock-pill" id="liveClock" title="Локальное время (UTC+4)">
+              <span class="live-dot"></span>
+              <span id="clockTxt">--:--:--</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -908,7 +1054,7 @@ u$*                     *$u</pre>
 <!-- PAGE 2 -->
 <div class="page2" id="page2">
   <div class="p2inner">
-    <div class="mhead">
+    <div class="mhead" id="highlightsSec">
       <div>
         <div class="mtitle" id="mT">Лучшие моменты</div>
         <div class="msub" id="mS">best clips · highlights archive</div>
@@ -945,7 +1091,7 @@ u$*                     *$u</pre>
     <div class="sec-divider"></div>
 
     <!-- FRIENDS HEADER -->
-    <div class="mhead">
+    <div class="mhead" id="friendsSec">
       <div>
         <div class="mtitle" data-delay="0">Мои друзья</div>
         <div class="msub" data-delay="100">top homies · leaderboard</div>
@@ -954,7 +1100,7 @@ u$*                     *$u</pre>
 
     <!-- FRIENDS OLYMPIC PODIUM (2 - 1 - 3) -->
     <div class="friends-podium">
-      <!-- 2 МЕСТО: krutoy.chuvack (СЛЕВА) -->
+      <!-- 2 МЕСТО: xw1zixx (СЛЕВА) -->
       <div class="podium-col rank-2" data-delay="100">
         <div class="fc-card top-2">
           <div class="fc-place">
@@ -963,16 +1109,16 @@ u$*                     *$u</pre>
           </div>
           <div class="fc-avwrap">
             <div class="fc-ring top-2-ring">
-              <img class="fc-av" src="friend2.png" alt="krutoy.chuvack"/>
+              <img class="fc-av" src="friend_xw1zixx.png" alt="xw1zixx"/>
             </div>
-            <div class="fc-badge">#2</div>
+            <div class="fc-badge badge-silver">#2</div>
           </div>
           <div class="fc-info">
-            <div class="fc-name">krutoy.chuvack</div>
+            <div class="fc-name">xw1zixx</div>
           </div>
-          <a href="https://www.tiktok.com/@krutoy.chuvack" class="fc-tiktok" target="_blank" rel="noopener" title="TikTok krutoy.chuvack">
+          <a href="https://www.tiktok.com/@xw1zixxxx" class="fc-tiktok" target="_blank" rel="noopener" title="TikTok xw1zixx">
             <img src="icons/tiktok.svg" alt="TikTok"/>
-            <span>@krutoy.chuvack</span>
+            <span>@xw1zixxxx</span>
             <i class="ph ph-arrow-up-right"></i>
           </a>
         </div>
@@ -982,25 +1128,25 @@ u$*                     *$u</pre>
         </div>
       </div>
 
-      <!-- 1 МЕСТО: ItzFrosz? (В ЦЕНТРЕ, ВЫШЕ ВСЕХ) -->
+      <!-- 1 МЕСТО: N9sc (В ЦЕНТРЕ, ВЫШЕ ВСЕХ) -->
       <div class="podium-col rank-1" data-delay="0">
         <div class="fc-card top-1">
           <div class="fc-place">
-            <span class="fc-crown">🥇</span>
+            <span class="fc-crown">👑</span>
             <span class="fc-rank">1 место</span>
           </div>
           <div class="fc-avwrap">
             <div class="fc-ring top-1-ring">
-              <img class="fc-av" src="friend1.png" alt="ItzFrosz?"/>
+              <img class="fc-av" src="friend_n9sc.jpg" alt="N9sc"/>
             </div>
             <div class="fc-badge badge-gold">#1</div>
           </div>
           <div class="fc-info">
-            <div class="fc-name">ItzFrosz?</div>
+            <div class="fc-name">N9sc</div>
           </div>
-          <a href="https://www.tiktok.com/@psevdonimman2" class="fc-tiktok" target="_blank" rel="noopener" title="TikTok ItzFrosz?">
+          <a href="https://www.tiktok.com/@dsmz805" class="fc-tiktok" target="_blank" rel="noopener" title="TikTok N9sc">
             <img src="icons/tiktok.svg" alt="TikTok"/>
-            <span>@psevdonimman2</span>
+            <span>@dsmz805</span>
             <i class="ph ph-arrow-up-right"></i>
           </a>
         </div>
@@ -1010,27 +1156,27 @@ u$*                     *$u</pre>
         </div>
       </div>
 
-      <!-- 3 МЕСТО: нету (СПРАВА) -->
+      <!-- 3 МЕСТО: krutoy.chuvack (СПРАВА) -->
       <div class="podium-col rank-3" data-delay="200">
-        <div class="fc-card top-3 empty">
+        <div class="fc-card top-3">
           <div class="fc-place">
             <span class="fc-crown">🥉</span>
             <span class="fc-rank">3 место</span>
           </div>
           <div class="fc-avwrap">
-            <div class="fc-ring empty-ring">
-              <div class="fc-av-placeholder">
-                <i class="ph ph-question"></i>
-              </div>
+            <div class="fc-ring top-3-ring">
+              <img class="fc-av" src="friend_rafish.jpg" alt="RAFI$H"/>
             </div>
-            <div class="fc-badge">#3</div>
+            <div class="fc-badge badge-bronze">#3</div>
           </div>
           <div class="fc-info">
-            <div class="fc-name dim">нету</div>
+            <div class="fc-name">RAFI$H</div>
           </div>
-          <div class="fc-tiktok empty-tt">
-            <span>—</span>
-          </div>
+          <a href="https://www.tiktok.com/@me.gachi.muchi" class="fc-tiktok" target="_blank" rel="noopener" title="TikTok RAFI$H">
+            <img src="icons/tiktok.svg" alt="TikTok"/>
+            <span>@me.gachi.muchi</span>
+            <i class="ph ph-arrow-up-right"></i>
+          </a>
         </div>
         <div class="podium-shelf shelf-3"></div>
         <div class="podium-stand stand-3">
@@ -1106,7 +1252,86 @@ document.addEventListener('click', () => {
   document.querySelectorAll('.has-flyout.active').forEach(t => t.classList.remove('active'));
 });
 
-// ── MATRIX ──
+// ── THEME ACCENT MANAGER (CHROME / CRIMSON / PHANTOM / ICE) ──
+const themePresets = {
+  chrome:  { rgb: '255,255,255', spark: '#ffffff', glow: 'rgba(255,255,255,0.9)' },
+  crimson: { rgb: '255,51,68',   spark: '#ff3344', glow: 'rgba(255,51,68,0.9)' },
+  phantom: { rgb: '179,102,255', spark: '#b366ff', glow: 'rgba(179,102,255,0.9)' },
+  ice:     { rgb: '0,229,255',   spark: '#00e5ff', glow: 'rgba(0,229,255,0.9)' }
+};
+
+function applyTheme(name) {
+  const p = themePresets[name] || themePresets.chrome;
+  if (name === 'chrome') {
+    document.documentElement.removeAttribute('data-theme');
+  } else {
+    document.documentElement.setAttribute('data-theme', name);
+  }
+  window.matrixRGB = p.rgb;
+  window.currentSparkColor = p.spark;
+  window.currentSparkGlow = p.glow;
+  try { localStorage.setItem('trovixx_theme', name); } catch(e){}
+
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.t === name);
+  });
+}
+
+document.querySelectorAll('.theme-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const t = btn.dataset.t;
+    applyTheme(t);
+    const rect = btn.getBoundingClientRect();
+    if (typeof spawnSparks === 'function') spawnSparks(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    if (typeof playThemeSwitch === 'function') playThemeSwitch(t);
+    else if (typeof playClick === 'function') playClick();
+    showToast(`Тема: ${t.toUpperCase()}`);
+  });
+});
+
+let savedTheme = 'chrome';
+try { savedTheme = localStorage.getItem('trovixx_theme') || 'chrome'; } catch(e){}
+applyTheme(savedTheme);
+
+// ── LIVE CLOCK (UTC+4 SAMARA / MSK+1) ──
+function updateClock() {
+  const now = new Date();
+  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const d = new Date(utc + (3600000 * 4));
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  const ss = String(d.getSeconds()).padStart(2, '0');
+  const timeStr = `${hh}:${mm}:${ss}`;
+  const dockClockTxt = document.getElementById('dockClockTxt');
+  if (dockClockTxt) dockClockTxt.textContent = timeStr;
+  const clockTxt = document.getElementById('clockTxt');
+  if (clockTxt) clockTxt.textContent = timeStr;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// ── CLICK TO COPY HANDLE ──
+const heroHandle = document.getElementById('heroHandle');
+if (heroHandle) {
+  heroHandle.addEventListener('click', e => {
+    e.stopPropagation();
+    navigator.clipboard.writeText('@trovix_x').then(() => {
+      const origHTML = heroHandle.innerHTML;
+      heroHandle.innerHTML = '<span style="color:#4ade80;font-weight:700">✓ скопировано!</span>';
+      setTimeout(() => { heroHandle.innerHTML = origHTML; }, 1800);
+      showToast('📋 @trovix_x скопирован в буфер!');
+      const rect = heroHandle.getBoundingClientRect();
+      if (typeof spawnStars === 'function') spawnStars(e.clientX || (rect.left + rect.width / 2), e.clientY || (rect.top + rect.height / 2));
+      if (typeof playSuccess === 'function') playSuccess();
+    }).catch(() => {
+      showToast('@trovix_x');
+    });
+  });
+}
+
+
+// ── MATRIX RAIN (ADAPTS TO CURRENT THEME) ──
 const cv=document.getElementById('matrix'),cx=cv.getContext('2d');
 const SYM='/$#@%&!?=+~|\\^*<>[]{}01';
 let cols=[],W,H,FS=13;
@@ -1119,14 +1344,16 @@ function drawM(){
   cx.fillStyle='rgba(0,0,0,0.05)';cx.fillRect(0,0,W,H);
   cx.font=FS+'px monospace';
   cols.forEach(c=>{
-    cx.fillStyle=`rgba(255,255,255,${c.op})`;
+    cx.fillStyle=`rgba(${window.matrixRGB || '255,255,255'},${c.op})`;
     cx.fillText(SYM[Math.floor(Math.random()*SYM.length)],c.x,c.y);
-    c.y+=c.sp;
+    c.y += c.sp;
     if(c.y>H+FS){c.y=Math.random()*-300;c.sp=Math.random()*1.1+0.2;c.op=Math.random()*0.3+0.04;}
   });
   requestAnimationFrame(drawM);
 }
 drawM();
+
+
 
 // ── OBSERVERS ──
 const io=new IntersectionObserver(entries=>{
@@ -1454,9 +1681,11 @@ audio.addEventListener('timeupdate',()=>{if(!audio.duration)return;pgf.style.wid
 audio.addEventListener('loadedmetadata',()=>tD.textContent=fmt(audio.duration));
 audio.addEventListener('play', () => {
   pIco.className = 'ph ph-pause';
+  document.getElementById('player')?.classList.add('is-playing');
 });
 audio.addEventListener('pause', () => {
   pIco.className = 'ph ph-play';
+  document.getElementById('player')?.classList.remove('is-playing');
 });
 pg.addEventListener('click',e=>{const r=pg.getBoundingClientRect();audio.currentTime=(e.clientX-r.left)/r.width*audio.duration;});
 document.getElementById('vol').addEventListener('input',e=>audio.volume=e.target.value);
@@ -1515,9 +1744,9 @@ audio.addEventListener('ended', () => {
 
 
 
-// ═════════════════════════════════════════════════
-// ── CYBER AUDIO SFX ENGINE (Web Audio API) ───────
-// ═════════════════════════════════════════════════
+// ═════════════════════════════════════════════════════════════════
+// ── NEXT-GEN HAPTIC AUDIO ENGINE (STUDIO QUALITY SYNTHESIS) ─────
+// ═════════════════════════════════════════════════════════════════
 let sfxEnabled = true;
 let actx = null;
 
@@ -1539,85 +1768,222 @@ const unlockAudio = () => {
 document.addEventListener('pointerdown', unlockAudio);
 document.addEventListener('keydown', unlockAudio);
 
-// 1. Subtle High-Tech Glass Hover Tick
+// Master Soft Compressor Bus (Warm acoustic body, zero clipping)
+let masterBus = null;
+function getMasterBus(ctx) {
+  if (masterBus && masterBus.context === ctx) return masterBus;
+  try {
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.setValueAtTime(-12, ctx.currentTime);
+    comp.knee.setValueAtTime(6, ctx.currentTime);
+    comp.ratio.setValueAtTime(4, ctx.currentTime);
+    comp.attack.setValueAtTime(0.003, ctx.currentTime);
+    comp.release.setValueAtTime(0.05, ctx.currentTime);
+    comp.connect(ctx.destination);
+    masterBus = comp;
+  } catch(e) {
+    masterBus = ctx.destination;
+  }
+  return masterBus;
+}
+
+// 1. SILKY CERAMIC HAPTIC TICK (HOVER)
+// Feels like soft haptic feedback on iPhone glass.
+// Soft, short, rounded, completely removes harsh high-pitch squeaks.
 let lastHoverTime = 0;
 function playHover(){
   if(!sfxEnabled) return;
   const now = performance.now();
-  if(now - lastHoverTime < 55) return;
+  if(now - lastHoverTime < 45) return;
   lastHoverTime = now;
   const ctx = getAC();
   if(!ctx) return;
+
   const t = ctx.currentTime;
+  const dest = getMasterBus(ctx);
+  const detune = (Math.random() - 0.5) * 35;
+  const baseFreq = 520 + detune;
+
   const osc = ctx.createOscillator();
-  const g = ctx.createGain();
+  const filter = ctx.createBiquadFilter();
+  const gain = ctx.createGain();
+
   osc.type = 'sine';
-  osc.frequency.setValueAtTime(2100, t);
-  osc.frequency.exponentialRampToValueAtTime(2900, t + 0.018);
-  g.gain.setValueAtTime(0.025, t);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.02);
-  osc.connect(g);
-  g.connect(ctx.destination);
+  osc.frequency.setValueAtTime(baseFreq * 1.25, t);
+  osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.75, t + 0.015);
+
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(1300, t);
+
+  gain.gain.setValueAtTime(0.024, t);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.017);
+
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(dest);
+
   osc.start(t);
-  osc.stop(t + 0.022);
+  osc.stop(t + 0.019);
 }
 
-// 2. Punchy Cyber Click
+// 2. THOCKY MECHANICAL SWITCH (CLICK)
+// Dual-layer tactile synthesis:
+// Layer 1: Crisp tactile mechanical transient click
+// Layer 2: Deep lubed switch resonant thock (60-220Hz)
 function playClick(){
   if(!sfxEnabled) return;
   const ctx = getAC();
   if(!ctx) return;
+
   const t = ctx.currentTime;
-  const osc = ctx.createOscillator();
-  const g = ctx.createGain();
-  osc.type = 'triangle';
-  osc.frequency.setValueAtTime(740, t);
-  osc.frequency.exponentialRampToValueAtTime(140, t + 0.038);
-  g.gain.setValueAtTime(0.075, t);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.04);
-  osc.connect(g);
-  g.connect(ctx.destination);
-  osc.start(t);
-  osc.stop(t + 0.042);
+  const dest = getMasterBus(ctx);
+  const detune = (Math.random() - 0.5) * 30;
+
+  // Layer 1: The Crisp Snap
+  const snapOsc = ctx.createOscillator();
+  const snapGain = ctx.createGain();
+  const snapFilter = ctx.createBiquadFilter();
+
+  snapOsc.type = 'triangle';
+  snapOsc.frequency.setValueAtTime(1450 + detune, t);
+  snapOsc.frequency.exponentialRampToValueAtTime(320, t + 0.014);
+
+  snapFilter.type = 'bandpass';
+  snapFilter.frequency.setValueAtTime(1600, t);
+  snapFilter.Q.setValueAtTime(1.4, t);
+
+  snapGain.gain.setValueAtTime(0.07, t);
+  snapGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.016);
+
+  snapOsc.connect(snapFilter);
+  snapFilter.connect(snapGain);
+  snapGain.connect(dest);
+  snapOsc.start(t);
+  snapOsc.stop(t + 0.018);
+
+  // Layer 2: The Warm Thock Body
+  const thockOsc = ctx.createOscillator();
+  const thockGain = ctx.createGain();
+  const thockFilter = ctx.createBiquadFilter();
+
+  thockOsc.type = 'sine';
+  thockOsc.frequency.setValueAtTime(240 + detune * 0.4, t);
+  thockOsc.frequency.exponentialRampToValueAtTime(65, t + 0.038);
+
+  thockFilter.type = 'lowpass';
+  thockFilter.frequency.setValueAtTime(600, t);
+
+  thockGain.gain.setValueAtTime(0.085, t);
+  thockGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.04);
+
+  thockOsc.connect(thockFilter);
+  thockFilter.connect(thockGain);
+  thockGain.connect(dest);
+  thockOsc.start(t);
+  thockOsc.stop(t + 0.043);
 }
 
-// 3. Ascending Two-Tone Chime (Copy to Clipboard)
+// 3. CRYSTAL REWARD HARMONIC CHIME (COPY HANDLE & SUCCESS)
+// 4-note crystalline chord shimmer with soft bell envelope
 function playSuccess(){
   if(!sfxEnabled) return;
   const ctx = getAC();
   if(!ctx) return;
+
   const t = ctx.currentTime;
-  [ { f: 659, delay: 0 }, { f: 987, delay: 0.065 } ].forEach(n => {
+  const dest = getMasterBus(ctx);
+
+  const notes = [
+    { f: 587.33, delay: 0.00, gain: 0.045, len: 0.16 }, // D5
+    { f: 880.00, delay: 0.038, gain: 0.040, len: 0.18 }, // A5
+    { f: 1174.66, delay: 0.076, gain: 0.042, len: 0.22 }, // D6
+    { f: 1760.00, delay: 0.114, gain: 0.026, len: 0.24 }  // A6
+  ];
+
+  notes.forEach(n => {
     const osc = ctx.createOscillator();
     const g = ctx.createGain();
+    const f = ctx.createBiquadFilter();
+
     osc.type = 'sine';
     osc.frequency.setValueAtTime(n.f, t + n.delay);
-    g.gain.setValueAtTime(0.05, t + n.delay);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + n.delay + 0.12);
-    osc.connect(g);
-    g.connect(ctx.destination);
+
+    f.type = 'lowpass';
+    f.frequency.setValueAtTime(3600, t + n.delay);
+
+    g.gain.setValueAtTime(0.001, t + n.delay);
+    g.gain.linearRampToValueAtTime(n.gain, t + n.delay + 0.007);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + n.delay + n.len);
+
+    osc.connect(f);
+    f.connect(g);
+    g.connect(dest);
+
     osc.start(t + n.delay);
-    osc.stop(t + n.delay + 0.13);
+    osc.stop(t + n.delay + n.len + 0.01);
   });
 }
 
-// 4. Shimmer Swoosh (Flyout Popover Open)
+// 4. VELVET AIR POP (FLYOUT POPOVER)
 function playFlyout(){
   if(!sfxEnabled) return;
   const ctx = getAC();
   if(!ctx) return;
+
   const t = ctx.currentTime;
+  const dest = getMasterBus(ctx);
+
   const osc = ctx.createOscillator();
+  const filter = ctx.createBiquadFilter();
   const g = ctx.createGain();
+
   osc.type = 'sine';
-  osc.frequency.setValueAtTime(1200, t);
-  osc.frequency.exponentialRampToValueAtTime(2200, t + 0.055);
-  g.gain.setValueAtTime(0.03, t);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
-  osc.connect(g);
-  g.connect(ctx.destination);
+  osc.frequency.setValueAtTime(260, t);
+  osc.frequency.exponentialRampToValueAtTime(640, t + 0.03);
+
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(1050, t);
+
+  g.gain.setValueAtTime(0.04, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.042);
+
+  osc.connect(filter);
+  filter.connect(g);
+  g.connect(dest);
+
   osc.start(t);
-  osc.stop(t + 0.065);
+  osc.stop(t + 0.045);
+}
+
+// 5. THEME SWITCH CHIME
+function playThemeSwitch(themeName){
+  if(!sfxEnabled) return;
+  const ctx = getAC();
+  if(!ctx) return;
+
+  const t = ctx.currentTime;
+  const dest = getMasterBus(ctx);
+
+  const freqs = {
+    chrome:  { f1: 523.25, f2: 1046.50 }, // C5 + C6
+    crimson: { f1: 440.00, f2: 880.00 },  // A4 + A5
+    phantom: { f1: 659.25, f2: 1318.51 }, // E5 + E6
+    ice:     { f1: 783.99, f2: 1567.98 }  // G5 + G6
+  };
+  const tf = freqs[themeName] || freqs.chrome;
+
+  [ { f: tf.f1, d: 0, g: 0.045 }, { f: tf.f2, d: 0.035, g: 0.035 } ].forEach(n => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(n.f, t + n.d);
+    gain.gain.setValueAtTime(n.g, t + n.d);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + n.d + 0.12);
+    osc.connect(gain);
+    gain.connect(dest);
+    osc.start(t + n.d);
+    osc.stop(t + n.d + 0.13);
+  });
 }
 
 // ── BIND SFX TO INTERACTIVE ELEMENTS (ALWAYS ACTIVE BY DEFAULT) ──
@@ -1665,24 +2031,24 @@ function drawCyberStar(ctx, cx, cy, spikes, outerR, innerR, rot) {
 
 function spawnStars(x, y) {
   if (!sparksCv || !sparksCtx) return;
-  const count = 10;
+  const count = 12;
   for (let i = 0; i < count; i++) {
     const angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.45;
-    const speed = Math.random() * 200 + 150;
+    const speed = Math.random() * 210 + 150;
     starParticles.push({
       x: x,
       y: y,
       vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed - (Math.random() * 75 + 25),
+      vy: Math.sin(angle) * speed - (Math.random() * 85 + 25),
       gravity: 520,
       drag: 0.94,
       outerR: Math.random() * 3.5 + 5.5,
       innerR: Math.random() * 1.5 + 2.0,
       spikes: Math.random() > 0.4 ? 4 : 5,
       rot: Math.random() * Math.PI * 2,
-      rotSpeed: (Math.random() - 0.5) * 16,
+      rotSpeed: (Math.random() - 0.5) * 18,
       age: 0,
-      life: 0.5
+      life: 0.52
     });
   }
   if (!sparksRunning) {
@@ -1691,6 +2057,8 @@ function spawnStars(x, y) {
     requestAnimationFrame(updateStars);
   }
 }
+window.spawnStars = spawnStars;
+window.spawnSparks = spawnStars;
 
 function updateStars(now) {
   const dt = Math.min((now - lastSparksTime) / 1000, 0.05);
@@ -1722,8 +2090,8 @@ function updateStars(now) {
     sparksCtx.translate(p.x, p.y);
     sparksCtx.scale(scale, scale);
     sparksCtx.globalAlpha = alpha;
-    sparksCtx.fillStyle = '#ffffff';
-    sparksCtx.shadowColor = 'rgba(255, 255, 255, 0.9)';
+    sparksCtx.fillStyle = window.currentSparkColor || '#ffffff';
+    sparksCtx.shadowColor = window.currentSparkGlow || 'rgba(255, 255, 255, 0.9)';
     sparksCtx.shadowBlur = 8;
 
     drawCyberStar(sparksCtx, 0, 0, p.spikes, p.outerR, p.innerR, p.rot);
@@ -1743,6 +2111,23 @@ window.addEventListener('pointerdown', e => {
   spawnStars(e.clientX, e.clientY);
 }, { passive: true });
 
+// ── 3D TILT FOR PODIUM FRIEND CARDS (DESKTOP) ──
+document.querySelectorAll('.fc-card').forEach(fc => {
+  fc.addEventListener('mousemove', e => {
+    if (window.innerWidth <= 768) return;
+    const rect = fc.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const rotX = ((y - rect.height / 2) / (rect.height / 2)) * -8.5;
+    const rotY = ((x - rect.width / 2) / (rect.width / 2)) * 8.5;
+    fc.style.transition = 'transform 0.08s ease-out';
+    fc.style.transform = `perspective(600px) rotateX(${rotX.toFixed(1)}deg) rotateY(${rotY.toFixed(1)}deg) translateY(-8px)`;
+  });
+  fc.addEventListener('mouseleave', () => {
+    fc.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+    fc.style.transform = '';
+  });
+});
 </script>
 </body>
 </html>
