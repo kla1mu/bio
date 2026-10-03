@@ -41,18 +41,21 @@ body{background:#000;color:#fff;font-family:'Inter',-apple-system,BlinkMacSystem
 #cdot{
   position:fixed;pointer-events:none;z-index:99999;
   width:8px;height:8px;border-radius:50%;
-  background:var(--accent,#fff);transform:translate(-50%,-50%);
+  top:0;left:0;
+  background:var(--accent,#fff);
   box-shadow:0 0 12px var(--accent,#fff),0 0 24px var(--accent-glow);
   transition:width .18s ease,height .18s ease,background .25s ease,box-shadow .25s ease,border .18s ease;
-  will-change:left,top;
+  will-change:transform;
+  transform:translate3d(-100px,-100px,0) translate(-50%,-50%);
 }
 #cglow{
   position:fixed;pointer-events:none;z-index:99998;
   width:260px;height:260px;border-radius:50%;
+  top:0;left:0;
   background:radial-gradient(circle,var(--accent-soft,rgba(255,255,255,0.06)) 0%,transparent 70%);
-  transform:translate(-50%,-50%);
   transition:background .35s ease;
-  will-change:left,top;
+  will-change:transform;
+  transform:translate3d(-100px,-100px,0) translate(-50%,-50%);
 }
 body.hovered #cdot{
   width:26px;height:26px;
@@ -63,7 +66,7 @@ body.hovered #cdot{
 }
 
 /* ═══ CANVAS ═══ */
-#matrix{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.09}
+#matrix{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.09;will-change:contents;}
 #sparksCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:999998;pointer-events:none;}
 
 /* ═══ BG GRADIENT & LIQUID ORBS ═══ */
@@ -77,15 +80,25 @@ body.hovered #cdot{
 }
 .liquid-orb{
   position:fixed;border-radius:50%;pointer-events:none;z-index:1;
-  filter:blur(90px);opacity:0.22;
-  animation:orbFloat 18s ease-in-out infinite alternate;
+  opacity:0.25;
+  will-change:transform;
+  transform:translateZ(0);
+  animation:orbFloat 22s ease-in-out infinite alternate;
 }
-.orb-1{width:520px;height:520px;background:rgba(180,180,200,0.15);top:10%;left:5%;animation-duration:22s}
-.orb-2{width:460px;height:460px;background:rgba(140,140,160,0.12);bottom:15%;right:5%;animation-duration:26s;animation-delay:-10s}
+.orb-1{
+  width:540px;height:540px;
+  background:radial-gradient(circle, rgba(180,180,200,0.2) 0%, rgba(180,180,200,0.06) 50%, transparent 70%);
+  top:10%;left:5%;animation-duration:24s;
+}
+.orb-2{
+  width:480px;height:480px;
+  background:radial-gradient(circle, rgba(140,140,160,0.16) 0%, rgba(140,140,160,0.05) 50%, transparent 70%);
+  bottom:15%;right:5%;animation-duration:28s;animation-delay:-10s;
+}
 @keyframes orbFloat{
-  0%{transform:translate(0,0) scale(1)}
-  50%{transform:translate(40px,-60px) scale(1.12)}
-  100%{transform:translate(-30px,40px) scale(0.94)}
+  0%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(40px,-60px,0) scale(1.12)}
+  100%{transform:translate3d(-30px,40px,0) scale(0.94)}
 }
 
 /* ═══ MONUMENTAL ASCII SKULL (LEFT SIDE, FULL SCREEN HEIGHT) ═══ */
@@ -282,12 +295,14 @@ body.hovered #cdot{
   transition:opacity .3s ease;
 }
 .card-shimmer{
-  position:absolute;top:0;left:-100%;width:65%;height:100%;
+  position:absolute;top:0;left:0;width:65%;height:100%;
   background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,0.06) 50%,transparent 65%);
+  transform:translateX(-160%);
   animation:shimmerSweep 9s cubic-bezier(.4,0,.2,1) infinite;
   pointer-events:none;z-index:2;
+  will-change:transform;
 }
-@keyframes shimmerSweep{0%,100%{left:-100%}45%,55%{left:150%}}
+@keyframes shimmerSweep{0%,100%{transform:translateX(-160%)}45%,55%{transform:translateX(260%)}}
 @keyframes cardIn{
   from{opacity:0;transform:translateY(24px)}
   to{opacity:1;transform:none}
@@ -1313,13 +1328,22 @@ u$*                     *$u</pre>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <script>
-// ── CURSOR (instant, no lag) ──
-const cdot=document.getElementById('cdot'),cglow=document.getElementById('cglow');
-addEventListener('mousemove',e=>{
-  const x=e.clientX+'px',y=e.clientY+'px';
-  cdot.style.left=x;cdot.style.top=y;
-  cglow.style.left=x;cglow.style.top=y;
-});
+// ── CURSOR (GPU accelerated translate3d with rAF throttling) ──
+const cdot = document.getElementById('cdot'), cglow = document.getElementById('cglow');
+let curX = -100, curY = -100, cursorTicking = false;
+window.addEventListener('mousemove', e => {
+  curX = e.clientX;
+  curY = e.clientY;
+  if (!cursorTicking) {
+    cursorTicking = true;
+    requestAnimationFrame(() => {
+      const tr = `translate3d(${curX}px,${curY}px,0) translate(-50%,-50%)`;
+      if (cdot) cdot.style.transform = tr;
+      if (cglow) cglow.style.transform = tr;
+      cursorTicking = false;
+    });
+  }
+}, { passive: true });
 
 // Cursor Hover effects
 document.querySelectorAll('a, button, input, .tag, .row, .vc, .fc-card, .fc-tiktok, .podium-col, .stat-pill, .rep-pill-btn').forEach(el => {
@@ -1327,33 +1351,46 @@ document.querySelectorAll('a, button, input, .tag, .row, .vc, .fc-card, .fc-tikt
   el.addEventListener('mouseleave', () => document.body.classList.remove('hovered'));
 });
 
-// ── 3D LIQUID CARD TILT & SPECULAR (DESKTOP) ──
+// ── 3D LIQUID CARD TILT & SPECULAR (DESKTOP, rAF THROTTLED) ──
 const cardWrap = document.getElementById('cardWrap');
 const specular = document.getElementById('specular');
 
 if (cardWrap) {
+  let cardTiltTicking = false;
+  let cardEvt = null;
+
   cardWrap.addEventListener('mousemove', e => {
     if (window.innerWidth <= 768) return;
-    cardWrap.style.transition = 'transform 0.08s ease-out';
-    const rect = cardWrap.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const cx = rect.width / 2;
-    const cy = rect.height / 2;
-    const rotX = ((y - cy) / cy) * -9.5;
-    const rotY = ((x - cx) / cx) * 9.5;
+    cardEvt = e;
+    if (!cardTiltTicking) {
+      cardTiltTicking = true;
+      requestAnimationFrame(() => {
+        if (!cardEvt) { cardTiltTicking = false; return; }
+        cardWrap.style.transition = 'transform 0.08s ease-out';
+        const rect = cardWrap.getBoundingClientRect();
+        const x = cardEvt.clientX - rect.left;
+        const y = cardEvt.clientY - rect.top;
+        const cx = rect.width / 2;
+        const cy = rect.height / 2;
+        const rotX = ((y - cy) / cy) * -9.5;
+        const rotY = ((x - cx) / cx) * 9.5;
 
-    cardWrap.style.transform = `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale3d(1.018, 1.018, 1.018)`;
-    if (specular) {
-      specular.style.transition = 'opacity 0.2s ease';
-      specular.style.setProperty('--mx', `${(x / rect.width * 100).toFixed(1)}%`);
-      specular.style.setProperty('--my', `${(y / rect.height * 100).toFixed(1)}%`);
-      specular.style.opacity = '1';
+        cardWrap.style.transform = `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale3d(1.018, 1.018, 1.018)`;
+        if (specular) {
+          specular.style.transition = 'opacity 0.2s ease';
+          specular.style.setProperty('--mx', `${(x / rect.width * 100).toFixed(1)}%`);
+          specular.style.setProperty('--my', `${(y / rect.height * 100).toFixed(1)}%`);
+          specular.style.opacity = '1';
+        }
+        cardTiltTicking = false;
+      });
     }
-  });
+  }, { passive: true });
 
   cardWrap.addEventListener('mouseleave', () => {
     if (window.innerWidth <= 768) return;
+    cardEvt = null;
+    cardTiltTicking = false;
     cardWrap.style.transition = 'transform 0.75s cubic-bezier(0.16, 1, 0.3, 1)';
     cardWrap.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
     if (specular) {
@@ -1453,27 +1490,39 @@ if (heroHandle) {
 }
 
 
-// ── MATRIX RAIN (ADAPTS TO CURRENT THEME) ──
-const cv=document.getElementById('matrix'),cx=cv.getContext('2d');
+// ── MATRIX RAIN (ADAPTS TO CURRENT THEME, 30 FPS CAP, AUTO-PAUSE WHEN HIDDEN) ──
+const cv=document.getElementById('matrix'),cx=cv ? cv.getContext('2d') : null;
 const SYM='/$#@%&!?=+~|\\^*<>[]{}01';
-let cols=[],W,H,FS=13;
+let cols=[],W,H,FS=17;
 function initM(){
-  W=cv.width=innerWidth;H=cv.height=innerHeight;cols=[];
-  for(let i=0;i<Math.floor(W/FS);i++)cols.push({x:i*FS,y:Math.random()*H*-1,sp:Math.random()*1.1+0.2,op:Math.random()*0.3+0.04});
-}
-initM();addEventListener('resize',initM);
-function drawM(){
-  cx.fillStyle='rgba(0,0,0,0.05)';cx.fillRect(0,0,W,H);
+  if(!cv || !cx) return;
+  W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;cols=[];
   cx.font=FS+'px monospace';
-  cols.forEach(c=>{
-    cx.fillStyle=`rgba(${window.matrixRGB || '255,255,255'},${c.op})`;
-    cx.fillText(SYM[Math.floor(Math.random()*SYM.length)],c.x,c.y);
-    c.y += c.sp;
-    if(c.y>H+FS){c.y=Math.random()*-300;c.sp=Math.random()*1.1+0.2;c.op=Math.random()*0.3+0.04;}
-  });
+  const numCols = Math.floor(W/FS);
+  for(let i=0;i<numCols;i++)cols.push({x:i*FS,y:Math.random()*H*-1,sp:Math.random()*1.1+0.2,op:Math.random()*0.3+0.04});
+}
+if(cv && cx){
+  initM();
+  window.addEventListener('resize',initM);
+  let lastMTime=0;
+  const M_INTERVAL = 1000 / 30; // 30 FPS cap
+  function drawM(now){
+    requestAnimationFrame(drawM);
+    if(document.hidden) return; // 0% GPU when tab is hidden or minimized
+    if(now - lastMTime < M_INTERVAL) return;
+    lastMTime = now;
+    cx.fillStyle='rgba(0,0,0,0.05)';cx.fillRect(0,0,W,H);
+    const rgb = window.matrixRGB || '255,255,255';
+    for(let i=0;i<cols.length;i++){
+      const c = cols[i];
+      cx.fillStyle=`rgba(${rgb},${c.op})`;
+      cx.fillText(SYM[Math.floor(Math.random()*SYM.length)],c.x,c.y);
+      c.y += c.sp;
+      if(c.y>H+FS){c.y=Math.random()*-260;c.sp=Math.random()*1.1+0.2;c.op=Math.random()*0.3+0.04;}
+    }
+  }
   requestAnimationFrame(drawM);
 }
-drawM();
 
 
 
@@ -1701,12 +1750,16 @@ function getBarEnergies() {
   return energies;
 }
 
-function drawEqualizer() {
-  vizCtx.clearRect(0, 0, vizCanvas.width, vizCanvas.height);
-  const energies = getBarEnergies();
+let isVizRunning = false;
+let vizRafId = null;
 
+function renderVizFrame() {
+  if (!vizCtx) return false;
   const w = vizCanvas.width;
   const h = vizCanvas.height;
+  vizCtx.clearRect(0, 0, w, h);
+  const energies = getBarEnergies();
+
   const barW = Math.round(5.5 * DPR);
   const gap = Math.round(3.5 * DPR);
   const totalW = BARS * barW + (BARS - 1) * gap;
@@ -1714,23 +1767,37 @@ function drawEqualizer() {
   const minH = 2.5 * DPR;
   const maxH = h - 4 * DPR;
 
+  const barGrad = vizCtx.createLinearGradient(0, 0, 0, h);
+  barGrad.addColorStop(0, '#ffffff');
+  barGrad.addColorStop(0.4, 'rgba(255,255,255,0.85)');
+  barGrad.addColorStop(1, 'rgba(255,255,255,0.2)');
+
+  let hasMovement = false;
+
   for (let i = 0; i < BARS; i++) {
     const targetH = minH + energies[i] * (maxH - minH);
 
     if (targetH > barHeights[i]) {
       barHeights[i] += (targetH - barHeights[i]) * 0.55;
+      hasMovement = true;
     } else {
       barHeights[i] += (targetH - barHeights[i]) * 0.22;
+      if (Math.abs(barHeights[i] - targetH) > 0.08) hasMovement = true;
     }
 
     if (barHeights[i] >= peakHeights[i]) {
       peakHeights[i] = barHeights[i];
       peakHold[i] = 10;
+      hasMovement = true;
     } else {
       if (peakHold[i] > 0) {
         peakHold[i]--;
+        hasMovement = true;
       } else {
-        peakHeights[i] = Math.max(minH, peakHeights[i] - 0.7 * DPR);
+        if (peakHeights[i] > minH) {
+          peakHeights[i] = Math.max(minH, peakHeights[i] - 0.7 * DPR);
+          hasMovement = true;
+        }
       }
     }
 
@@ -1738,15 +1805,7 @@ function drawEqualizer() {
     const by = Math.round(h - barHeights[i]);
     const barCurrentH = Math.max(minH, barHeights[i]);
 
-    const grad = vizCtx.createLinearGradient(0, by, 0, h);
-    grad.addColorStop(0, '#ffffff');
-    grad.addColorStop(0.4, 'rgba(255,255,255,0.85)');
-    grad.addColorStop(1, 'rgba(255,255,255,0.2)');
-
-    vizCtx.fillStyle = grad;
-    vizCtx.shadowColor = 'rgba(255,255,255,0.35)';
-    vizCtx.shadowBlur = Math.round(5 * DPR);
-
+    vizCtx.fillStyle = barGrad;
     vizCtx.beginPath();
     const r = Math.min(barW / 2, 2.5 * DPR);
     if (vizCtx.roundRect) {
@@ -1758,8 +1817,6 @@ function drawEqualizer() {
 
     const peakY = Math.round(Math.max(0, h - peakHeights[i] - 2.5 * DPR));
     vizCtx.fillStyle = '#ffffff';
-    vizCtx.shadowColor = 'rgba(255,255,255,0.7)';
-    vizCtx.shadowBlur = Math.round(7 * DPR);
     vizCtx.beginPath();
     if (vizCtx.roundRect) {
       vizCtx.roundRect(bx, peakY, barW, Math.max(1, 1.5 * DPR), 1 * DPR);
@@ -1768,10 +1825,38 @@ function drawEqualizer() {
     }
     vizCtx.fill();
   }
-
-  requestAnimationFrame(drawEqualizer);
+  return hasMovement;
 }
-drawEqualizer();
+
+function startVisualizer() {
+  if (isVizRunning) return;
+  isVizRunning = true;
+  function loop() {
+    if (document.hidden) {
+      vizRafId = requestAnimationFrame(loop);
+      return;
+    }
+    const hasMovement = renderVizFrame();
+    if (!audio.paused && !audio.ended) {
+      vizRafId = requestAnimationFrame(loop);
+    } else if (hasMovement) {
+      vizRafId = requestAnimationFrame(loop);
+    } else {
+      isVizRunning = false;
+      vizRafId = null;
+    }
+  }
+  vizRafId = requestAnimationFrame(loop);
+}
+
+// Initial resting frame
+renderVizFrame();
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && !audio.paused && !audio.ended) {
+    startVisualizer();
+  }
+});
 
 // Autoplay: try immediately then on first interaction
 function tryPlay(){
@@ -1810,10 +1895,17 @@ audio.addEventListener('loadedmetadata',()=>tD.textContent=fmt(audio.duration));
 audio.addEventListener('play', () => {
   pIco.className = 'ph ph-pause';
   document.getElementById('player')?.classList.add('is-playing');
+  startVisualizer();
 });
 audio.addEventListener('pause', () => {
   pIco.className = 'ph ph-play';
   document.getElementById('player')?.classList.remove('is-playing');
+  startVisualizer();
+});
+audio.addEventListener('ended', () => {
+  pIco.className = 'ph ph-play';
+  document.getElementById('player')?.classList.remove('is-playing');
+  startVisualizer();
 });
 pg.addEventListener('click',e=>{const r=pg.getBoundingClientRect();audio.currentTime=(e.clientX-r.left)/r.width*audio.duration;});
 document.getElementById('vol').addEventListener('input',e=>audio.volume=e.target.value);
@@ -2219,8 +2311,6 @@ function updateStars(now) {
     sparksCtx.scale(scale, scale);
     sparksCtx.globalAlpha = alpha;
     sparksCtx.fillStyle = window.currentSparkColor || '#ffffff';
-    sparksCtx.shadowColor = window.currentSparkGlow || 'rgba(255, 255, 255, 0.9)';
-    sparksCtx.shadowBlur = 8;
 
     drawCyberStar(sparksCtx, 0, 0, p.spikes, p.outerR, p.innerR, p.rot);
     sparksCtx.fill();
@@ -2239,19 +2329,31 @@ window.addEventListener('pointerdown', e => {
   spawnStars(e.clientX, e.clientY);
 }, { passive: true });
 
-// ── 3D TILT FOR PODIUM FRIEND CARDS (DESKTOP) ──
+// ── 3D TILT FOR PODIUM FRIEND CARDS (DESKTOP, rAF THROTTLED) ──
 document.querySelectorAll('.fc-card').forEach(fc => {
+  let fcTicking = false;
+  let fcEvt = null;
   fc.addEventListener('mousemove', e => {
     if (window.innerWidth <= 768) return;
-    const rect = fc.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const rotX = ((y - rect.height / 2) / (rect.height / 2)) * -8.5;
-    const rotY = ((x - rect.width / 2) / (rect.width / 2)) * 8.5;
-    fc.style.transition = 'transform 0.08s ease-out';
-    fc.style.transform = `perspective(600px) rotateX(${rotX.toFixed(1)}deg) rotateY(${rotY.toFixed(1)}deg) translateY(-8px)`;
-  });
+    fcEvt = e;
+    if (!fcTicking) {
+      fcTicking = true;
+      requestAnimationFrame(() => {
+        if (!fcEvt) { fcTicking = false; return; }
+        const rect = fc.getBoundingClientRect();
+        const x = fcEvt.clientX - rect.left;
+        const y = fcEvt.clientY - rect.top;
+        const rotX = ((y - rect.height / 2) / (rect.height / 2)) * -8.5;
+        const rotY = ((x - rect.width / 2) / (rect.width / 2)) * 8.5;
+        fc.style.transition = 'transform 0.08s ease-out';
+        fc.style.transform = `perspective(600px) rotateX(${rotX.toFixed(1)}deg) rotateY(${rotY.toFixed(1)}deg) translateY(-8px)`;
+        fcTicking = false;
+      });
+    }
+  }, { passive: true });
   fc.addEventListener('mouseleave', () => {
+    fcEvt = null;
+    fcTicking = false;
     fc.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
     fc.style.transform = '';
   });
