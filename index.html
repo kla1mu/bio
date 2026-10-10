@@ -1073,7 +1073,7 @@ u$*                     *$u</pre>
               <b>@</b>trovix_x
               <i class="ph ph-copy handle-copy-ico"></i>
             </div>
-            <div class="live-clock-pill" id="liveClock" title="Локальное время (UTC+4)">
+            <div class="live-clock-pill" id="liveClock" title="Московское время (MSK / UTC+3)">
               <span class="live-dot"></span>
               <span id="clockTxt">--:--:--</span>
             </div>
@@ -1218,6 +1218,18 @@ u$*                     *$u</pre>
           <span class="vhint">клик для паузы</span>
         </div>
       </div>
+      <div class="vc" data-delay="200">
+        <div class="vtop-bar">
+          <span class="vbadge">clip 03 · brawl stars</span>
+          <button class="vctrl-btn vmute" title="Вкл/выкл звук"><i class="ph ph-speaker-slash"></i></button>
+        </div>
+        <video src="videos/IMG_4916.mp4" loop muted playsinline preload="metadata"></video>
+        <div class="vov"></div>
+        <div class="vbottom-bar">
+          <span class="vlbl">highlight 03</span>
+          <span class="vhint">клик для паузы</span>
+        </div>
+      </div>
     </div>
 
     <!-- SECTION DIVIDER ("ПАЛКА") -->
@@ -1249,11 +1261,6 @@ u$*                     *$u</pre>
           <div class="fc-info">
             <div class="fc-name">xw1zixx</div>
           </div>
-          <a href="https://www.tiktok.com/@xw1zixxxx" class="fc-tiktok" target="_blank" rel="noopener" title="TikTok xw1zixx">
-            <img src="icons/tiktok.svg" alt="TikTok"/>
-            <span>@xw1zixxxx</span>
-            <i class="ph ph-arrow-up-right"></i>
-          </a>
         </div>
         <div class="podium-shelf shelf-2"></div>
         <div class="podium-stand stand-2">
@@ -1277,11 +1284,6 @@ u$*                     *$u</pre>
           <div class="fc-info">
             <div class="fc-name">N9sc</div>
           </div>
-          <a href="https://www.tiktok.com/@dsmz805" class="fc-tiktok" target="_blank" rel="noopener" title="TikTok N9sc">
-            <img src="icons/tiktok.svg" alt="TikTok"/>
-            <span>@dsmz805</span>
-            <i class="ph ph-arrow-up-right"></i>
-          </a>
         </div>
         <div class="podium-shelf shelf-1"></div>
         <div class="podium-stand stand-1">
@@ -1305,11 +1307,6 @@ u$*                     *$u</pre>
           <div class="fc-info">
             <div class="fc-name">RAFI$H</div>
           </div>
-          <a href="https://www.tiktok.com/@me.gachi.muchi" class="fc-tiktok" target="_blank" rel="noopener" title="TikTok RAFI$H">
-            <img src="icons/tiktok.svg" alt="TikTok"/>
-            <span>@me.gachi.muchi</span>
-            <i class="ph ph-arrow-up-right"></i>
-          </a>
         </div>
         <div class="podium-shelf shelf-3"></div>
         <div class="podium-stand stand-3">
@@ -1453,19 +1450,33 @@ let savedTheme = 'chrome';
 try { savedTheme = localStorage.getItem('trovixx_theme') || 'chrome'; } catch(e){}
 applyTheme(savedTheme);
 
-// ── LIVE CLOCK (UTC+4 SAMARA / MSK+1) ──
+// ── LIVE CLOCK (UTC+3 MOSCOW / MSK) ──
 function updateClock() {
-  const now = new Date();
-  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-  const d = new Date(utc + (3600000 * 4));
-  const hh = String(d.getHours()).padStart(2, '0');
-  const mm = String(d.getMinutes()).padStart(2, '0');
-  const ss = String(d.getSeconds()).padStart(2, '0');
-  const timeStr = `${hh}:${mm}:${ss}`;
-  const dockClockTxt = document.getElementById('dockClockTxt');
-  if (dockClockTxt) dockClockTxt.textContent = timeStr;
-  const clockTxt = document.getElementById('clockTxt');
-  if (clockTxt) clockTxt.textContent = timeStr;
+  try {
+    const timeStr = new Intl.DateTimeFormat('ru-RU', {
+      timeZone: 'Europe/Moscow',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }).format(new Date());
+    const dockClockTxt = document.getElementById('dockClockTxt');
+    if (dockClockTxt) dockClockTxt.textContent = timeStr;
+    const clockTxt = document.getElementById('clockTxt');
+    if (clockTxt) clockTxt.textContent = timeStr;
+  } catch (e) {
+    const now = new Date();
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const d = new Date(utc + (3600000 * 3));
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    const ss = String(d.getSeconds()).padStart(2, '0');
+    const timeStr = `${hh}:${mm}:${ss}`;
+    const dockClockTxt = document.getElementById('dockClockTxt');
+    if (dockClockTxt) dockClockTxt.textContent = timeStr;
+    const clockTxt = document.getElementById('clockTxt');
+    if (clockTxt) clockTxt.textContent = timeStr;
+  }
 }
 updateClock();
 setInterval(updateClock, 1000);
