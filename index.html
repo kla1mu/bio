@@ -1,8 +1,12 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" translate="no" class="notranslate">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="google" content="notranslate"/>
+<meta name="robots" content="notranslate"/>
+<meta name="googlebot" content="notranslate"/>
+<meta http-equiv="Content-Language" content="ru"/>
 <title>dd0rkk</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -65,13 +69,15 @@ body.hovered #cdot{
   backdrop-filter:blur(3px);
 }
 
-/* ═══ CANVAS ═══ */
-#matrix{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.09;will-change:contents;}
+/* ═══ CANVAS (ANTIGRAVITY PARTICLES & SPARKS) ═══ */
+#antigravityCanvas{
+  position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;
+}
 #sparksCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:999998;pointer-events:none;}
 
 /* ═══ BG GRADIENT & LIQUID ORBS ═══ */
 .bg-grad{
-  position:fixed;inset:0;z-index:1;pointer-events:none;
+  position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
     radial-gradient(ellipse 90% 120% at -5% 50%, rgba(95,95,105,0.55) 0%, rgba(45,45,55,0.2) 42%, transparent 72%),
     radial-gradient(ellipse 65% 75% at 105% 15%, rgba(60,60,70,0.32) 0%, transparent 55%),
@@ -79,7 +85,7 @@ body.hovered #cdot{
     radial-gradient(circle 350px at 50% 50%, rgba(255,255,255,0.015) 0%, transparent 80%);
 }
 .liquid-orb{
-  position:fixed;border-radius:50%;pointer-events:none;z-index:1;
+  position:fixed;border-radius:50%;pointer-events:none;z-index:0;
   opacity:0.25;
   will-change:transform;
   transform:translateZ(0);
@@ -111,15 +117,19 @@ body.hovered #cdot{
   opacity:0.13;
   display:flex;align-items:center;
 }
-.skull pre{
-  font-family:"Courier New",Consolas,monospace;
+.skull pre, .skull pre *{
+  font-family:"Courier New",Consolas,"JetBrains Mono",monospace !important;
   font-size:clamp(16px,3.9vh,42px);
   line-height:1.16;
   color:var(--accent,#fff);
-  white-space:pre;
-  letter-spacing:-0.03em;
+  white-space:pre !important;
+  letter-spacing:0 !important;
+  font-variant-ligatures:none !important;
+  font-feature-settings:"liga" 0 !important;
+  text-rendering:geometricPrecision !important;
   text-shadow:0 0 35px var(--accent-glow,rgba(255,255,255,0.4));
   transition:color .35s ease, text-shadow .35s ease;
+  user-select:none;
 }
 
 /* ═══ THEME ACCENT HUD (TOP RIGHT) ═══ */
@@ -229,14 +239,18 @@ body.hovered #cdot{
   opacity:0.13;
   display:flex;align-items:center;
 }
-.antigravity-ascii pre{
-  font-family:"Courier New",Consolas,monospace;
+.antigravity-ascii pre, .antigravity-ascii pre *{
+  font-family:"Courier New",Consolas,"JetBrains Mono",monospace !important;
   font-size:clamp(16px,3.9vh,42px);
   line-height:1.16;
   color:#fff;
-  white-space:pre;
-  letter-spacing:-0.03em;
+  white-space:pre !important;
+  letter-spacing:0 !important;
+  font-variant-ligatures:none !important;
+  font-feature-settings:"liga" 0 !important;
+  text-rendering:geometricPrecision !important;
   text-shadow:0 0 35px rgba(255,255,255,0.4);
+  user-select:none;
 }
 
 /* ═══ INTERACTIVE TOAST ═══ */
@@ -1001,19 +1015,20 @@ footer{position:relative;z-index:10;text-align:center;padding:24px 20px 32px;fon
 }
 </style>
 </head>
+<body class="notranslate" translate="no">
 <div id="toast"><i class="ph ph-check-circle" style="color:#fff;font-size:.9rem"></i><span id="toastMsg"></span></div>
 
 <div id="cdot"></div>
 <div id="cglow"></div>
-<canvas id="matrix"></canvas>
+<canvas id="antigravityCanvas"></canvas>
 <canvas id="sparksCanvas"></canvas>
 <div class="bg-grad"></div>
 <div class="liquid-orb orb-1"></div>
 <div class="liquid-orb orb-2"></div>
 
-<!-- SKULL (no animation) -->
-<div class="skull">
-<pre>         uu$$$$$$$$$$$uu
+<!-- SKULL (no animation, protected against translation) -->
+<div class="skull notranslate" translate="no" data-nosnippet>
+<pre class="notranslate" translate="no" lang="zxx" xml:lang="zxx">         uu$$$$$$$$$$$uu
       uu$$$$$$$$$$$$$$$$$uu
      u$$$$$$$$$$$$$$$$$$$$$u
     u$$$$$$$$$$$$$$$$$$$$$$$u
@@ -1028,9 +1043,9 @@ footer{position:relative;z-index:10;text-align:center;padding:24px 20px 32px;fon
          u$*$*$*$*$*$*$u</pre>
 </div>
 
-<!-- ANTIGRAVITY ASCII LOGO (RIGHT SIDE) -->
-<div class="antigravity-ascii">
-<pre>         uu$$$$$uu         
+<!-- ANTIGRAVITY ASCII LOGO (RIGHT SIDE, protected against translation) -->
+<div class="antigravity-ascii notranslate" translate="no" data-nosnippet>
+<pre class="notranslate" translate="no" lang="zxx" xml:lang="zxx">         uu$$$$$uu         
         u$$$$$$$$$u        
        uu$$$$$$$$$uu       
       u$$$$$$$$$$$$$u      
@@ -1489,39 +1504,191 @@ if (heroHandle) {
 }
 
 
-// ── MATRIX RAIN (ADAPTS TO CURRENT THEME, 30 FPS CAP, AUTO-PAUSE WHEN HIDDEN) ──
-const cv=document.getElementById('matrix'),cx=cv ? cv.getContext('2d') : null;
-const SYM='/$#@%&!?=+~|\\^*<>[]{}01';
-let cols=[],W,H,FS=17;
-function initM(){
-  if(!cv || !cx) return;
-  W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;cols=[];
-  cx.font=FS+'px monospace';
-  const numCols = Math.floor(W/FS);
-  for(let i=0;i<numCols;i++)cols.push({x:i*FS,y:Math.random()*H*-1,sp:Math.random()*1.1+0.2,op:Math.random()*0.3+0.04});
-}
-if(cv && cx){
-  initM();
-  window.addEventListener('resize',initM);
-  let lastMTime=0;
-  const M_INTERVAL = 1000 / 30; // 30 FPS cap
-  function drawM(now){
-    requestAnimationFrame(drawM);
-    if(document.hidden) return; // 0% GPU when tab is hidden or minimized
-    if(now - lastMTime < M_INTERVAL) return;
-    lastMTime = now;
-    cx.fillStyle='rgba(0,0,0,0.05)';cx.fillRect(0,0,W,H);
-    const rgb = window.matrixRGB || '255,255,255';
-    for(let i=0;i<cols.length;i++){
-      const c = cols[i];
-      cx.fillStyle=`rgba(${rgb},${c.op})`;
-      cx.fillText(SYM[Math.floor(Math.random()*SYM.length)],c.x,c.y);
-      c.y += c.sp;
-      if(c.y>H+FS){c.y=Math.random()*-260;c.sp=Math.random()*1.1+0.2;c.op=Math.random()*0.3+0.04;}
+// ── INTERACTIVE ANTIGRAVITY PARTICLE SYSTEM WITH MOUSE REPULSION & SPRING PHYSICS ──
+(function() {
+  const canvas = document.getElementById('antigravityCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  let dpr = window.devicePixelRatio || 1;
+  let width = 0, height = 0;
+  let particles = [];
+  const mouse = { x: -9999, y: -9999, active: false };
+
+  // Physical parameters
+  const SPACING = window.innerWidth < 768 ? 28 : 34;
+  const REPEL_RADIUS = window.innerWidth < 768 ? 130 : 165;
+  const REPEL_RADIUS_SQ = REPEL_RADIUS * REPEL_RADIUS;
+  const REPEL_FORCE = 16.5;   // Antigravity repulsion strength
+  const SPRING_K = 0.06;      // Hooke's law spring elasticity
+  const FRICTION = 0.83;      // Viscous fluid damping (liquid jelly effect)
+
+  function resizeCanvas() {
+    dpr = window.devicePixelRatio || 1;
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = Math.floor(width * dpr);
+    canvas.height = Math.floor(height * dpr);
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
+    createGrid();
+  }
+
+  function createGrid() {
+    particles = [];
+    const cols = Math.ceil(width / SPACING) + 1;
+    const rows = Math.ceil(height / SPACING) + 1;
+    const offsetX = (width - (cols - 1) * SPACING) / 2;
+    const offsetY = (height - (rows - 1) * SPACING) / 2;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const ox = offsetX + c * SPACING;
+        const oy = offsetY + r * SPACING;
+        particles.push({
+          ox: ox,
+          oy: oy,
+          x: ox,
+          y: oy,
+          vx: 0,
+          vy: 0,
+          baseRadius: 1.45,
+          disp: 0
+        });
+      }
     }
   }
-  requestAnimationFrame(drawM);
-}
+
+  // Mouse & Touch interaction
+  window.addEventListener('mousemove', function(e) {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    mouse.active = true;
+  }, { passive: true });
+
+  window.addEventListener('mouseleave', function() {
+    mouse.active = false;
+    mouse.x = -9999;
+    mouse.y = -9999;
+  });
+
+  window.addEventListener('touchstart', function(e) {
+    if (e.touches.length > 0) {
+      mouse.x = e.touches[0].clientX;
+      mouse.y = e.touches[0].clientY;
+      mouse.active = true;
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchmove', function(e) {
+    if (e.touches.length > 0) {
+      mouse.x = e.touches[0].clientX;
+      mouse.y = e.touches[0].clientY;
+      mouse.active = true;
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchend', function() {
+    mouse.active = false;
+    mouse.x = -9999;
+    mouse.y = -9999;
+  });
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  // Animation render loop
+  function loop() {
+    requestAnimationFrame(loop);
+    if (document.hidden) return; // 0% GPU when tab is hidden/minimized
+
+    ctx.clearRect(0, 0, width, height);
+
+    const calmList = [];
+    const activeList = [];
+    const pCount = particles.length;
+
+    for (let i = 0; i < pCount; i++) {
+      const p = particles[i];
+
+      // 1. Antigravity Mouse Repulsion Field
+      if (mouse.active) {
+        const dx = p.x - mouse.x;
+        const dy = p.y - mouse.y;
+        const distSq = dx * dx + dy * dy;
+
+        if (distSq < REPEL_RADIUS_SQ && distSq > 0.001) {
+          const dist = Math.sqrt(distSq);
+          const factor = 1 - dist / REPEL_RADIUS;
+          const force = factor * factor * REPEL_FORCE;
+          p.vx += (dx / dist) * force;
+          p.vy += (dy / dist) * force;
+        }
+      }
+
+      // 2. Elastic Spring Force (Hooke's Law returning to home)
+      const homeDx = p.ox - p.x;
+      const homeDy = p.oy - p.y;
+      p.vx += homeDx * SPRING_K;
+      p.vy += homeDy * SPRING_K;
+
+      // 3. Fluid Damping Friction (Jelly-like smooth deceleration)
+      p.vx *= FRICTION;
+      p.vy *= FRICTION;
+
+      // 4. Update Position
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // 5. Measure Displacement for Visual Glow
+      const dispSq = homeDx * homeDx + homeDy * homeDy;
+      p.disp = Math.sqrt(dispSq);
+
+      if (p.disp > 2.2) {
+        activeList.push(p);
+      } else {
+        calmList.push(p);
+      }
+    }
+
+    // Render calm particles in a single ultra-fast batch
+    ctx.fillStyle = 'rgba(0, 205, 255, 0.32)';
+    ctx.beginPath();
+    const calmCount = calmList.length;
+    for (let i = 0; i < calmCount; i++) {
+      const p = calmList[i];
+      ctx.moveTo(p.x + p.baseRadius, p.y);
+      ctx.arc(p.x, p.y, p.baseRadius, 0, 6.2831853);
+    }
+    ctx.fill();
+
+    // Render energized / displaced particles with neon bloom & size expansion
+    const activeCount = activeList.length;
+    for (let i = 0; i < activeCount; i++) {
+      const p = activeList[i];
+      const ratio = Math.min(p.disp / 38, 1);
+      const r = p.baseRadius + ratio * 1.6;
+      const alpha = 0.5 + ratio * 0.5;
+
+      // Outer soft neon halo
+      ctx.fillStyle = 'rgba(0, 230, 255, ' + (alpha * 0.38) + ')';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r * 2.3, 0, 6.2831853);
+      ctx.fill();
+
+      // Bright electric core
+      ctx.fillStyle = 'rgba(195, 248, 255, ' + alpha + ')';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r, 0, 6.2831853);
+      ctx.fill();
+    }
+  }
+
+  requestAnimationFrame(loop);
+})();
 
 
 
@@ -2696,6 +2863,38 @@ if (btnRep) {
     }
   });
 }
+
+// ── ASCII ART PROTECTOR (Guarantees ASCII is never broken by browser translators or extensions) ──
+(function() {
+  var SKULL_TXT = "         uu$$$$$$$$$$$uu\n      uu$$$$$$$$$$$$$$$$$uu\n     u$$$$$$$$$$$$$$$$$$$$$u\n    u$$$$$$$$$$$$$$$$$$$$$$$u\n   u$$$$$$$$$$$$$$$$$$$$$$$$$u\n   u$$$$$$*   *$$$*   *$$$$$$u\n   *$$$$*      u$u       $$$$*\n    $$$u       u$u       u$$$\n    $$$u      u$$$u      u$$$\n     *$$$$uu$$$   $$$uu$$$$*\n      *$$$$$$$*   *$$$$$$$*\n        u$$$$$$$u$$$$$$$u\n         u$*$*$*$*$*$*$u";
+  var ANTI_TXT = "         uu$$$$$uu         \n        u$$$$$$$$$u        \n       uu$$$$$$$$$uu       \n      u$$$$$$$$$$$$$u      \n     uu$$$$$$$$$$$$$uu     \n     $$$$$$$$$$$$$$$$$     \n    u$$$$$$$* *$$$$$$$u    \n   uu$$$$*       *$$$$uu   \n   *$$$$           $$$$*   \n  u$$$u             u$$$u  \n  $$$*               *$$$  \n u$$*                 *$$u \nu$*                     *$u";
+
+  function restoreAscii() {
+    var s = document.querySelector('.skull pre');
+    var a = document.querySelector('.antigravity-ascii pre');
+    if (s && (s.textContent !== SKULL_TXT || s.querySelector('font'))) {
+      s.textContent = SKULL_TXT;
+    }
+    if (a && (a.textContent !== ANTI_TXT || a.querySelector('font'))) {
+      a.textContent = ANTI_TXT;
+    }
+  }
+
+  restoreAscii();
+
+  if (window.MutationObserver) {
+    var obs = new MutationObserver(function() {
+      restoreAscii();
+    });
+    var sBox = document.querySelector('.skull');
+    var aBox = document.querySelector('.antigravity-ascii');
+    if (sBox) obs.observe(sBox, { childList: true, subtree: true, characterData: true });
+    if (aBox) obs.observe(aBox, { childList: true, subtree: true, characterData: true });
+  }
+
+  setInterval(restoreAscii, 1000);
+})();
+
 </script>
 </body>
 </html>
