@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>trovixx</title>
+<title>dd0rkk</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -1064,13 +1064,13 @@ u$*                     *$u</pre>
       <div class="card-stripe"></div>
       <div class="hero">
         <div class="av-wrap">
-          <div class="av-ring"><div class="av-inner"><div class="av-imgwrap"><img class="av-img" src="avatar.jpg" alt="trovixx"/></div></div></div>
+          <div class="av-ring"><div class="av-inner"><div class="av-imgwrap"><img class="av-img" src="avatar.jpg?v=2" alt="dd0rkk"/></div></div></div>
         </div>
         <div class="hero-info">
-          <div class="hero-name">Тровикс</div>
+          <div class="hero-name">dd0rkk</div>
           <div class="hero-meta-row">
-            <div class="hero-handle" id="heroHandle" title="Нажми, чтобы скопировать @trovix_x">
-              <b>@</b>trovix_x
+            <div class="hero-handle" id="heroHandle" title="Нажми, чтобы скопировать @dd0rkk">
+              <b>@</b>dd0rkk
               <i class="ph ph-copy handle-copy-ico"></i>
             </div>
             <div class="live-clock-pill" id="liveClock" title="Московское время (MSK / UTC+3)">
@@ -1097,11 +1097,11 @@ u$*                     *$u</pre>
       <div class="rows">
         <div class="row" data-delay="40">
           <div class="row-ico"><i class="ph ph-fingerprint-simple"></i></div>
-          <div><div class="rlbl">name</div><div class="rval">Тровикс</div></div>
+          <div><div class="rlbl">name</div><div class="rval">dd0rkk</div></div>
         </div>
         <div class="row" data-delay="100">
           <div class="row-ico"><i class="ph ph-terminal-window"></i></div>
-          <div><div class="rlbl">username</div><div class="rval ac">@trovix_x</div></div>
+          <div><div class="rlbl">username</div><div class="rval ac">@dd0rkk</div></div>
         </div>
         <div class="row" data-delay="160">
           <div class="row-ico"><i class="ph ph-hourglass-simple-medium"></i></div>
@@ -1162,16 +1162,16 @@ u$*                     *$u</pre>
 
       <div class="dv"></div>
       <div class="socials">
-        <a href="https://t.me/trovix_x" class="soc-btn" data-delay="40" target="_blank" rel="noopener" title="Telegram">
+        <a href="https://t.me/dd0rkk" class="soc-btn" data-delay="40" target="_blank" rel="noopener" title="Telegram @dd0rkk">
           <img src="icons/telegram.svg" alt="Telegram"/>
         </a>
-        <a href="https://discord.com/users/trovixx" class="soc-btn" data-delay="80" target="_blank" rel="noopener" title="Discord">
+        <a href="https://discord.com/users/dd0rkk" class="soc-btn" data-delay="80" target="_blank" rel="noopener" title="Discord">
           <img src="icons/discord.svg" alt="Discord"/>
         </a>
-        <a href="https://steamcommunity.com/id/Trovixx/" class="soc-btn" data-delay="120" target="_blank" rel="noopener" title="Steam">
+        <a href="https://steamcommunity.com/id/dd0rkk/" class="soc-btn" data-delay="120" target="_blank" rel="noopener" title="Steam">
           <img src="icons/steam.svg" alt="Steam"/>
         </a>
-        <a href="https://www.tiktok.com/@trovix_x" class="soc-btn" data-delay="160" target="_blank" rel="noopener" title="TikTok">
+        <a href="https://www.tiktok.com/@dd0rkk" class="soc-btn" data-delay="160" target="_blank" rel="noopener" title="TikTok @dd0rkk">
           <img src="icons/tiktok.svg" alt="TikTok"/>
         </a>
       </div>
@@ -1305,7 +1305,7 @@ u$*                     *$u</pre>
   </div>
 </div>
 
-<footer>trovixx · 2026</footer>
+<footer>dd0rkk · 2026</footer>
 <audio id="audio" src="vzapravdu.mp3" preload="auto"></audio>
 
 <!-- Firebase App & Realtime Database SDK (Compat) -->
@@ -1414,7 +1414,7 @@ function applyTheme(name) {
   window.matrixRGB = p.rgb;
   window.currentSparkColor = p.spark;
   window.currentSparkGlow = p.glow;
-  try { localStorage.setItem('trovixx_theme', name); } catch(e){}
+  try { localStorage.setItem('dd0rkk_theme', name); } catch(e){}
 
   document.querySelectorAll('.theme-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.t === name);
@@ -1435,7 +1435,7 @@ document.querySelectorAll('.theme-btn').forEach(btn => {
 });
 
 let savedTheme = 'chrome';
-try { savedTheme = localStorage.getItem('trovixx_theme') || 'chrome'; } catch(e){}
+try { savedTheme = localStorage.getItem('dd0rkk_theme') || 'chrome'; } catch(e){}
 applyTheme(savedTheme);
 
 // ── LIVE CLOCK (UTC+3 MOSCOW / MSK) ──
@@ -1474,16 +1474,16 @@ const heroHandle = document.getElementById('heroHandle');
 if (heroHandle) {
   heroHandle.addEventListener('click', e => {
     e.stopPropagation();
-    navigator.clipboard.writeText('@trovix_x').then(() => {
+    navigator.clipboard.writeText('@dd0rkk').then(() => {
       const origHTML = heroHandle.innerHTML;
       heroHandle.innerHTML = '<span style="color:#4ade80;font-weight:700">✓ скопировано!</span>';
       setTimeout(() => { heroHandle.innerHTML = origHTML; }, 1800);
-      showToast('📋 @trovix_x скопирован в буфер!');
+      showToast('📋 @dd0rkk скопирован в буфер!');
       const rect = heroHandle.getBoundingClientRect();
       if (typeof spawnStars === 'function') spawnStars(e.clientX || (rect.left + rect.width / 2), e.clientY || (rect.top + rect.height / 2));
       if (typeof playSuccess === 'function') playSuccess();
     }).catch(() => {
-      showToast('@trovix_x');
+      showToast('@dd0rkk');
     });
   });
 }
@@ -2378,20 +2378,20 @@ function formatStatNumber(num) {
 }
 
 // 1. Уникальный ID устройства (сохраняется в localStorage)
-let deviceId = localStorage.getItem('trovix_device_id');
+let deviceId = localStorage.getItem('dd0rkk_device_id');
 if (!deviceId) {
   deviceId = 'd_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
-  localStorage.setItem('trovix_device_id', deviceId);
+  localStorage.setItem('dd0rkk_device_id', deviceId);
 }
 
 // Начальное отображение из кеша
-let cachedViews = localStorage.getItem('trovix_views');
-let cachedReps = localStorage.getItem('trovix_reps');
+let cachedViews = localStorage.getItem('dd0rkk_views');
+let cachedReps = localStorage.getItem('dd0rkk_reps');
 if (viewsEl && cachedViews) viewsEl.textContent = formatStatNumber(parseInt(cachedViews, 10));
 if (repEl && cachedReps) repEl.textContent = formatStatNumber(parseInt(cachedReps, 10));
 
 // Проверка: уже накидывал ли пользователь +rep на этом устройстве (1 раз навсегда)
-const hasReppedLocalInit = localStorage.getItem('trovix_has_repped') || localStorage.getItem('trovix_last_rep_ts');
+const hasReppedLocalInit = localStorage.getItem('dd0rkk_has_repped') || localStorage.getItem('dd0rkk_last_rep_ts');
 if (btnRep && hasReppedLocalInit) {
   btnRep.classList.add('is-repped');
   btnRep.title = 'Вы уже оставили +rep (1 раз с устройства/IP)';
@@ -2404,7 +2404,7 @@ function sanitizeKey(str) {
 
 let cachedIp = null;
 try {
-  const savedIpObj = JSON.parse(localStorage.getItem('trovix_ip_cache') || 'null');
+  const savedIpObj = JSON.parse(localStorage.getItem('dd0rkk_ip_cache') || 'null');
   if (savedIpObj && savedIpObj.ip && (Date.now() - savedIpObj.ts < 2 * 60 * 60 * 1000)) {
     cachedIp = savedIpObj.ip;
   }
@@ -2427,7 +2427,7 @@ function getClientIP() {
           const ipStr = String(data.ip).trim();
           cachedIp = ipStr;
           try {
-            localStorage.setItem('trovix_ip_cache', JSON.stringify({ ip: ipStr, ts: Date.now() }));
+            localStorage.setItem('dd0rkk_ip_cache', JSON.stringify({ ip: ipStr, ts: Date.now() }));
           } catch(e) {}
           resolve(ipStr);
         } else {
@@ -2460,7 +2460,7 @@ if (fbDb) {
     const v = snap.val();
     if (v !== null && viewsEl) {
       viewsEl.textContent = formatStatNumber(v);
-      localStorage.setItem('trovix_views', v.toString());
+      localStorage.setItem('dd0rkk_views', v.toString());
     }
   });
 
@@ -2468,7 +2468,7 @@ if (fbDb) {
     const r = snap.val();
     if (r !== null && repEl) {
       repEl.textContent = formatStatNumber(r);
-      localStorage.setItem('trovix_reps', r.toString());
+      localStorage.setItem('dd0rkk_reps', r.toString());
     }
   });
 } else {
@@ -2485,7 +2485,7 @@ if (fbDb) {
 // 5. Учет уникальных просмотров (1 просмотр в 24 часа с устройства / IP)
 async function registerUniqueView() {
   const now = Date.now();
-  const localLastView = parseInt(localStorage.getItem('trovix_last_view_ts') || '0', 10);
+  const localLastView = parseInt(localStorage.getItem('dd0rkk_last_view_ts') || '0', 10);
 
   // 1-й барьер: локальный кулдаун устройства
   if (now - localLastView < COOLDOWN_24H) {
@@ -2506,7 +2506,7 @@ async function registerUniqueView() {
         const ipLastView = ipSnap.val();
         if (ipLastView && (now - ipLastView < COOLDOWN_24H)) {
           canCount = false;
-          localStorage.setItem('trovix_last_view_ts', ipLastView.toString());
+          localStorage.setItem('dd0rkk_last_view_ts', ipLastView.toString());
         }
       } catch(e) {}
     }
@@ -2518,23 +2518,23 @@ async function registerUniqueView() {
         const devLastView = devSnap.val();
         if (devLastView && (now - devLastView < COOLDOWN_24H)) {
           canCount = false;
-          localStorage.setItem('trovix_last_view_ts', devLastView.toString());
+          localStorage.setItem('dd0rkk_last_view_ts', devLastView.toString());
         }
       } catch(e) {}
     }
 
     if (canCount) {
-      localStorage.setItem('trovix_last_view_ts', now.toString());
+      localStorage.setItem('dd0rkk_last_view_ts', now.toString());
       fbDb.ref('stats/views').transaction(c => (c || 0) + 1);
       if (ipKey) fbDb.ref('tracking/ips/' + ipKey + '/lastView').set(now);
       if (devKey) fbDb.ref('tracking/devs/' + devKey + '/lastView').set(now);
     }
 
     // Проверяем статус +rep для этого IP на сервере
-    if (ipKey && btnRep && !localStorage.getItem('trovix_has_repped')) {
+    if (ipKey && btnRep && !localStorage.getItem('dd0rkk_has_repped')) {
       fbDb.ref('tracking/ips/' + ipKey + '/hasRep').once('value').then(snap => {
         if (snap.val()) {
-          localStorage.setItem('trovix_has_repped', '1');
+          localStorage.setItem('dd0rkk_has_repped', '1');
           btnRep.classList.add('is-repped');
           btnRep.title = 'Вы уже оставили +rep (1 раз с устройства/IP)';
         }
@@ -2551,13 +2551,13 @@ async function registerUniqueView() {
         const ipLastView = await res.json();
         if (ipLastView && (now - ipLastView < COOLDOWN_24H)) {
           canCount = false;
-          localStorage.setItem('trovix_last_view_ts', ipLastView.toString());
+          localStorage.setItem('dd0rkk_last_view_ts', ipLastView.toString());
         }
       } catch(e) {}
     }
 
     if (canCount) {
-      localStorage.setItem('trovix_last_view_ts', now.toString());
+      localStorage.setItem('dd0rkk_last_view_ts', now.toString());
       fetch(dbBase + '/stats/views.json')
         .then(r => r.json())
         .then(cur => {
@@ -2568,10 +2568,10 @@ async function registerUniqueView() {
         }).catch(()=>{});
     }
 
-    if (ipKey && btnRep && !localStorage.getItem('trovix_has_repped')) {
+    if (ipKey && btnRep && !localStorage.getItem('dd0rkk_has_repped')) {
       fetch(dbBase + '/tracking/ips/' + ipKey + '/hasRep.json').then(r=>r.json()).then(val => {
         if (val) {
-          localStorage.setItem('trovix_has_repped', '1');
+          localStorage.setItem('dd0rkk_has_repped', '1');
           btnRep.classList.add('is-repped');
           btnRep.title = 'Вы уже оставили +rep (1 раз с устройства/IP)';
         }
@@ -2590,7 +2590,7 @@ if (btnRep) {
     if (isRepping) return;
 
     // 1-й барьер: проверка локального хранилища устройства
-    const hasReppedLocal = localStorage.getItem('trovix_has_repped') || localStorage.getItem('trovix_last_rep_ts');
+    const hasReppedLocal = localStorage.getItem('dd0rkk_has_repped') || localStorage.getItem('dd0rkk_last_rep_ts');
     if (hasReppedLocal) {
       btnRep.classList.add('is-repped');
       showToast('Вы уже оставили +rep! (Разрешено только 1 раз с устройства/IP)');
@@ -2623,7 +2623,7 @@ if (btnRep) {
       }
 
       if (!canRep) {
-        localStorage.setItem('trovix_has_repped', '1');
+        localStorage.setItem('dd0rkk_has_repped', '1');
         btnRep.classList.add('is-repped');
         btnRep.title = 'Вы уже оставили +rep (1 раз с устройства/IP)';
         showToast('С вашего IP/устройства уже был оставлен +rep!');
@@ -2633,7 +2633,7 @@ if (btnRep) {
       }
 
       // ОДОБРЕНО: записываем +rep (1 раз навсегда)
-      localStorage.setItem('trovix_has_repped', '1');
+      localStorage.setItem('dd0rkk_has_repped', '1');
       btnRep.classList.add('is-repped');
       btnRep.title = 'Вы уже оставили +rep (1 раз с устройства/IP)';
 
@@ -2662,7 +2662,7 @@ if (btnRep) {
       }
 
       if (!canRep) {
-        localStorage.setItem('trovix_has_repped', '1');
+        localStorage.setItem('dd0rkk_has_repped', '1');
         btnRep.classList.add('is-repped');
         btnRep.title = 'Вы уже оставили +rep (1 раз с устройства/IP)';
         showToast('С вашего IP/устройства уже был оставлен +rep!');
@@ -2671,7 +2671,7 @@ if (btnRep) {
         return;
       }
 
-      localStorage.setItem('trovix_has_repped', '1');
+      localStorage.setItem('dd0rkk_has_repped', '1');
       btnRep.classList.add('is-repped');
       btnRep.title = 'Вы уже оставили +rep (1 раз с устройства/IP)';
 
