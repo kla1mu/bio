@@ -69,15 +69,13 @@ body.hovered #cdot{
   backdrop-filter:blur(3px);
 }
 
-/* ═══ CANVAS (ANTIGRAVITY PARTICLES & SPARKS) ═══ */
-#antigravityCanvas{
-  position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;
-}
+/* ═══ CANVAS ═══ */
+#matrix{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.09;will-change:contents;}
 #sparksCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:999998;pointer-events:none;}
 
 /* ═══ BG GRADIENT & LIQUID ORBS ═══ */
 .bg-grad{
-  position:fixed;inset:0;z-index:0;pointer-events:none;
+  position:fixed;inset:0;z-index:1;pointer-events:none;
   background:
     radial-gradient(ellipse 90% 120% at -5% 50%, rgba(95,95,105,0.55) 0%, rgba(45,45,55,0.2) 42%, transparent 72%),
     radial-gradient(ellipse 65% 75% at 105% 15%, rgba(60,60,70,0.32) 0%, transparent 55%),
@@ -85,7 +83,7 @@ body.hovered #cdot{
     radial-gradient(circle 350px at 50% 50%, rgba(255,255,255,0.015) 0%, transparent 80%);
 }
 .liquid-orb{
-  position:fixed;border-radius:50%;pointer-events:none;z-index:0;
+  position:fixed;border-radius:50%;pointer-events:none;z-index:1;
   opacity:0.25;
   will-change:transform;
   transform:translateZ(0);
@@ -1020,7 +1018,7 @@ footer{position:relative;z-index:10;text-align:center;padding:24px 20px 32px;fon
 
 <div id="cdot"></div>
 <div id="cglow"></div>
-<canvas id="antigravityCanvas"></canvas>
+<canvas id="matrix"></canvas>
 <canvas id="sparksCanvas"></canvas>
 <div class="bg-grad"></div>
 <div class="liquid-orb orb-1"></div>
@@ -1502,194 +1500,6 @@ if (heroHandle) {
     });
   });
 }
-
-
-// ── INTERACTIVE ANTIGRAVITY PARTICLE SYSTEM WITH MOUSE REPULSION & SPRING PHYSICS ──
-(function() {
-  const canvas = document.getElementById('antigravityCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-
-  let dpr = window.devicePixelRatio || 1;
-  let width = 0, height = 0;
-  let particles = [];
-  const mouse = { x: -9999, y: -9999, active: false };
-
-  // Physical parameters
-  const SPACING = window.innerWidth < 768 ? 28 : 34;
-  const REPEL_RADIUS = window.innerWidth < 768 ? 130 : 165;
-  const REPEL_RADIUS_SQ = REPEL_RADIUS * REPEL_RADIUS;
-  const REPEL_FORCE = 16.5;   // Antigravity repulsion strength
-  const SPRING_K = 0.06;      // Hooke's law spring elasticity
-  const FRICTION = 0.83;      // Viscous fluid damping (liquid jelly effect)
-
-  function resizeCanvas() {
-    dpr = window.devicePixelRatio || 1;
-    width = window.innerWidth;
-    height = window.innerHeight;
-    canvas.width = Math.floor(width * dpr);
-    canvas.height = Math.floor(height * dpr);
-    canvas.style.width = width + 'px';
-    canvas.style.height = height + 'px';
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.scale(dpr, dpr);
-    createGrid();
-  }
-
-  function createGrid() {
-    particles = [];
-    const cols = Math.ceil(width / SPACING) + 1;
-    const rows = Math.ceil(height / SPACING) + 1;
-    const offsetX = (width - (cols - 1) * SPACING) / 2;
-    const offsetY = (height - (rows - 1) * SPACING) / 2;
-
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const ox = offsetX + c * SPACING;
-        const oy = offsetY + r * SPACING;
-        particles.push({
-          ox: ox,
-          oy: oy,
-          x: ox,
-          y: oy,
-          vx: 0,
-          vy: 0,
-          baseRadius: 1.45,
-          disp: 0
-        });
-      }
-    }
-  }
-
-  // Mouse & Touch interaction
-  window.addEventListener('mousemove', function(e) {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-    mouse.active = true;
-  }, { passive: true });
-
-  window.addEventListener('mouseleave', function() {
-    mouse.active = false;
-    mouse.x = -9999;
-    mouse.y = -9999;
-  });
-
-  window.addEventListener('touchstart', function(e) {
-    if (e.touches.length > 0) {
-      mouse.x = e.touches[0].clientX;
-      mouse.y = e.touches[0].clientY;
-      mouse.active = true;
-    }
-  }, { passive: true });
-
-  window.addEventListener('touchmove', function(e) {
-    if (e.touches.length > 0) {
-      mouse.x = e.touches[0].clientX;
-      mouse.y = e.touches[0].clientY;
-      mouse.active = true;
-    }
-  }, { passive: true });
-
-  window.addEventListener('touchend', function() {
-    mouse.active = false;
-    mouse.x = -9999;
-    mouse.y = -9999;
-  });
-
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
-
-  // Animation render loop
-  function loop() {
-    requestAnimationFrame(loop);
-    if (document.hidden) return; // 0% GPU when tab is hidden/minimized
-
-    ctx.clearRect(0, 0, width, height);
-
-    const calmList = [];
-    const activeList = [];
-    const pCount = particles.length;
-
-    for (let i = 0; i < pCount; i++) {
-      const p = particles[i];
-
-      // 1. Antigravity Mouse Repulsion Field
-      if (mouse.active) {
-        const dx = p.x - mouse.x;
-        const dy = p.y - mouse.y;
-        const distSq = dx * dx + dy * dy;
-
-        if (distSq < REPEL_RADIUS_SQ && distSq > 0.001) {
-          const dist = Math.sqrt(distSq);
-          const factor = 1 - dist / REPEL_RADIUS;
-          const force = factor * factor * REPEL_FORCE;
-          p.vx += (dx / dist) * force;
-          p.vy += (dy / dist) * force;
-        }
-      }
-
-      // 2. Elastic Spring Force (Hooke's Law returning to home)
-      const homeDx = p.ox - p.x;
-      const homeDy = p.oy - p.y;
-      p.vx += homeDx * SPRING_K;
-      p.vy += homeDy * SPRING_K;
-
-      // 3. Fluid Damping Friction (Jelly-like smooth deceleration)
-      p.vx *= FRICTION;
-      p.vy *= FRICTION;
-
-      // 4. Update Position
-      p.x += p.vx;
-      p.y += p.vy;
-
-      // 5. Measure Displacement for Visual Glow
-      const dispSq = homeDx * homeDx + homeDy * homeDy;
-      p.disp = Math.sqrt(dispSq);
-
-      if (p.disp > 2.2) {
-        activeList.push(p);
-      } else {
-        calmList.push(p);
-      }
-    }
-
-    // Render calm particles in a single ultra-fast batch
-    ctx.fillStyle = 'rgba(0, 205, 255, 0.32)';
-    ctx.beginPath();
-    const calmCount = calmList.length;
-    for (let i = 0; i < calmCount; i++) {
-      const p = calmList[i];
-      ctx.moveTo(p.x + p.baseRadius, p.y);
-      ctx.arc(p.x, p.y, p.baseRadius, 0, 6.2831853);
-    }
-    ctx.fill();
-
-    // Render energized / displaced particles with neon bloom & size expansion
-    const activeCount = activeList.length;
-    for (let i = 0; i < activeCount; i++) {
-      const p = activeList[i];
-      const ratio = Math.min(p.disp / 38, 1);
-      const r = p.baseRadius + ratio * 1.6;
-      const alpha = 0.5 + ratio * 0.5;
-
-      // Outer soft neon halo
-      ctx.fillStyle = 'rgba(0, 230, 255, ' + (alpha * 0.38) + ')';
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r * 2.3, 0, 6.2831853);
-      ctx.fill();
-
-      // Bright electric core
-      ctx.fillStyle = 'rgba(195, 248, 255, ' + alpha + ')';
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r, 0, 6.2831853);
-      ctx.fill();
-    }
-  }
-
-  requestAnimationFrame(loop);
-})();
-
 
 
 // ── OBSERVERS ──
